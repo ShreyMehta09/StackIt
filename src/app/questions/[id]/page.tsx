@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowUp, ArrowDown, Eye, Clock, User, MessageSquare, Check } from 'lucide-react'
+import { ArrowLeft, ArrowUp, ArrowDown, Eye, Clock, User, MessageSquare, Check, Edit, Save, X } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import RichTextEditor from '@/components/RichTextEditor'
 
@@ -51,6 +51,14 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
   const [answerContent, setAnswerContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [userVotes, setUserVotes] = useState<{[key: string]: 'up' | 'down' | null}>({})
+  
+  // Edit state
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editContent, setEditContent] = useState('')
+  const [editTags, setEditTags] = useState('')
+  const [editSubmitting, setEditSubmitting] = useState(false)
+  
   const { user } = useAuth()
 
   useEffect(() => {
@@ -66,6 +74,10 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
       
       if (response.ok) {
         setQuestion(data.question)
+        // Initialize edit form with current values
+        setEditTitle(data.question.title)
+        setEditContent(data.question.content)
+        setEditTags(data.question.tags.join(', '))
       } else {
         setError(data.error || 'Question not found')
       }
@@ -105,6 +117,68 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
     } finally {
       setAnswersLoading(false)
     }
+  }
+
+  const handleEditQuestion = async () => {
+    if (!user || !question || question.author._id !== user.id) return
+
+    // Validation
+    if (!editTitle.trim() || editTitle.length < 10) {
+      alert('Title must be at least 10 characters long')
+      return
+    }
+
+    if (!editContent.trim() || editContent.length < 20) {
+      alert('Content must be at least 20 characters long')
+      return
+    }
+
+    if (!editTags.trim()) {
+      alert('At least one tag is required')
+      return
+    }
+
+    try {
+      setEditSubmitting(true)
+      
+      const tags = editTags.split(',').map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0)
+      
+      const response = await fetch(`/api/questions/${params.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: editTitle.trim(),
+          content: editContent.trim(),
+          tags: tags
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setQuestion(data.question)
+        setIsEditing(false)
+        alert('Question updated successfully!')
+      } else {
+        alert(data.error || 'Failed to update question')
+      }
+    } catch (error) {
+      console.error('Edit question error:', error)
+      alert('Failed to update question')
+    } finally {
+      setEditSubmitting(false)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    if (!question) return
+    
+    setEditTitle(question.title)
+    setEditContent(question.content)
+    setEditTags(question.tags.join(', '))
+    setIsEditing(false)
   }
 
   const handleVote = async (type: 'up' | 'down', targetType: 'question' | 'answer', targetId: string) => {
@@ -262,21 +336,61 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Questions
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{question.title}</h1>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
-            <span>Asked {formatTimeAgo(question.createdAt)}</span>
+        
+        {isEditing ? (
+          <div className="space-y-4">
+            <input
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              className="w-full text-3xl font-bold border-2 border-blue-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+              placeholder="Question title..."
+            />
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                <span>Asked {formatTimeAgo(question.createdAt)}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                <span>{question.views} views</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <MessageSquare className="w-4 h-4" />
+                <span>{question.answerCount} answers</span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Eye className="w-4 h-4" />
-            <span>{question.views} views</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <MessageSquare className="w-4 h-4" />
-            <span>{question.answerCount} answers</span>
-          </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-start justify-between mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 flex-1">{question.title}</h1>
+              {user && question.author._id === user.id && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="ml-4 flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                <span>Asked {formatTimeAgo(question.createdAt)}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                <span>{question.views} views</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <MessageSquare className="w-4 h-4" />
+                <span>{question.answerCount} answers</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Question */}
@@ -286,7 +400,7 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
           <div className="flex flex-col items-center space-y-2">
             <button 
               onClick={() => handleVote('up', 'question', question._id)}
-              disabled={!user}
+              disabled={!user || isEditing}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowUp className="w-6 h-6 text-gray-600" />
@@ -294,7 +408,7 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
             <span className="text-xl font-bold text-gray-900">{question.voteScore}</span>
             <button 
               onClick={() => handleVote('down', 'question', question._id)}
-              disabled={!user}
+              disabled={!user || isEditing}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowDown className="w-6 h-6 text-gray-600" />
@@ -303,44 +417,96 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
 
           {/* Content */}
           <div className="flex-1">
-            <div 
-              className="prose max-w-none mb-6"
-              dangerouslySetInnerHTML={{ __html: question.content }}
-            />
+            {isEditing ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Content
+                  </label>
+                  <RichTextEditor
+                    value={editContent}
+                    onChange={setEditContent}
+                    placeholder="Describe your question in detail..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tags (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={editTags}
+                    onChange={(e) => setEditTags(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="javascript, react, nextjs"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Add up to 5 tags to describe what your question is about
+                  </p>
+                </div>
 
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {question.tags.map((tag) => (
-                <Link
-                  key={tag}
-                  href={`/questions?tag=${tag}`}
-                  className="px-3 py-1 bg-primary-100 text-primary-700 text-sm rounded-md hover:bg-primary-200 transition-colors"
-                >
-                  {tag}
-                </Link>
-              ))}
-            </div>
-
-            {/* Author info */}
-            <div className="flex justify-end">
-              <div className="bg-blue-50 rounded-lg p-4 max-w-xs">
-                <div className="text-xs text-blue-600 mb-1">asked {formatTimeAgo(question.createdAt)}</div>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <Link 
-                      href={`/users/${question.author.username}`}
-                      className="font-medium text-blue-900 hover:text-blue-700 transition-colors"
-                    >
-                      {question.author.username}
-                    </Link>
-                    <div className="text-xs text-blue-600">{question.author.reputation} reputation</div>
-                  </div>
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={handleEditQuestion}
+                    disabled={editSubmitting}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Save className="w-4 h-4" />
+                    {editSubmitting ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    disabled={editSubmitting}
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    <X className="w-4 h-4" />
+                    Cancel
+                  </button>
                 </div>
               </div>
-            </div>
+            ) : (
+              <>
+                <div 
+                  className="prose max-w-none mb-6"
+                  dangerouslySetInnerHTML={{ __html: question.content }}
+                />
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {question.tags.map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/questions?tag=${tag}`}
+                      className="px-3 py-1 bg-primary-100 text-primary-700 text-sm rounded-md hover:bg-primary-200 transition-colors"
+                    >
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Author info */}
+                <div className="flex justify-end">
+                  <div className="bg-blue-50 rounded-lg p-4 max-w-xs">
+                    <div className="text-xs text-blue-600 mb-1">asked {formatTimeAgo(question.createdAt)}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <Link 
+                          href={`/users/${question.author.username}`}
+                          className="font-medium text-blue-900 hover:text-blue-700 transition-colors"
+                        >
+                          {question.author.username}
+                        </Link>
+                        <div className="text-xs text-blue-600">{question.author.reputation} reputation</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -476,7 +642,7 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
       </div>
 
       {/* Answer form */}
-      {user && (
+      {user && !isEditing && (
         <div className="card">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Answer</h3>
           <div className="space-y-4">

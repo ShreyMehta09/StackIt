@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.24.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.0",
     "bcryptjs": "^2.4.3",
