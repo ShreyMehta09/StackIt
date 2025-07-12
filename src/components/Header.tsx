@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Search, Bell, User, Menu, X } from 'lucide-react'
+import { Search, Bell, User, Menu, X, LogOut } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // This will be managed by auth context later
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const { user, logout, isLoading } = useAuth()
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -47,7 +49,7 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
-            {isLoggedIn ? (
+            {!isLoading && user ? (
               <>
                 {/* Notifications */}
                 <button className="relative p-2 text-gray-600 hover:text-primary-600">
@@ -57,13 +59,39 @@ export default function Header() {
                 
                 {/* User Menu */}
                 <div className="relative">
-                  <button className="flex items-center space-x-2 text-gray-700 hover:text-primary-600">
+                  <button 
+                    className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                  >
                     <User className="w-5 h-5" />
-                    <span className="hidden md:block">Profile</span>
+                    <span className="hidden md:block">{user.username}</span>
                   </button>
+                  
+                  {/* User Dropdown */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-2 border-b border-gray-200">
+                        <p className="text-sm font-medium text-gray-900">{user.username}</p>
+                        <p className="text-xs text-gray-500">{user.reputation} reputation</p>
+                      </div>
+                      <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Profile
+                      </Link>
+                      <Link href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Settings
+                      </Link>
+                      <button 
+                        onClick={logout}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               </>
-            ) : (
+            ) : !isLoading ? (
               <div className="flex items-center space-x-3">
                 <Link href="/login" className="text-gray-700 hover:text-primary-600 font-medium">
                   Log in
@@ -72,6 +100,8 @@ export default function Header() {
                   Sign up
                 </Link>
               </div>
+            ) : (
+              <div className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
             )}
 
             {/* Mobile Menu Button */}
