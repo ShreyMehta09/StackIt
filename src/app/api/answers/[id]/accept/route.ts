@@ -4,6 +4,7 @@ import Answer from '@/models/Answer'
 import Question from '@/models/Question'
 import User from '@/models/User'
 import { verifyToken } from '@/lib/auth'
+import { createAcceptedAnswerNotification } from '@/lib/notifications'
 
 // POST /api/answers/[id]/accept - Accept an answer
 export async function POST(
@@ -96,6 +97,18 @@ export async function POST(
         'stats.acceptedAnswers': 1
       }
     })
+    
+    // Create notification for answer author
+    if (answer.author.toString() !== payload.userId) {
+      await createAcceptedAnswerNotification(
+        answer.author.toString(),
+        payload.userId,
+        question._id.toString(),
+        params.id,
+        question.title,
+        user.username
+      )
+    }
     
     return NextResponse.json({
       message: 'Answer accepted successfully'

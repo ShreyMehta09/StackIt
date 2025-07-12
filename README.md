@@ -100,7 +100,7 @@ src/
 - [x] Global search integration
 - [x] User profile pages with activity tracking
 - [x] User directory with search and filtering
-- [ ] Notification system
+- [x] Notification system with real-time updates
 - [ ] Comment system for questions/answers
 - [ ] Admin moderation tools
 - [ ] Email notifications
@@ -196,3 +196,9 @@ npm run dev
 ### Users
 - `GET /api/users` - Get all users with pagination and sorting
 - `GET /api/users/[username]` - Get user profile with activity data
+
+### Notifications
+- `GET /api/notifications` - Get user's notifications with pagination and filtering
+- `POST /api/notifications` - Mark all notifications as read (authenticated)
+- `PATCH /api/notifications/[id]` - Mark specific notification as read (authenticated)
+- `DELETE /api/notifications/[id]` - Delete specific notification (authenticated)

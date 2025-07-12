@@ -11,9 +11,20 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileSearchQuery, setMobileSearchQuery] = useState('')
+  const [unreadCount, setUnreadCount] = useState(0)
   const { user, logout, isLoading } = useAuth()
   const userMenuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+
+  // Fetch unread notification count
+  useEffect(() => {
+    if (user) {
+      fetchUnreadCount()
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(fetchUnreadCount, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [user])
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -28,6 +39,18 @@ export default function Header() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await fetch('/api/notifications?unread=true&limit=1')
+      const data = await response.json()
+      if (response.ok) {
+        setUnreadCount(data.unreadCount || 0)
+      }
+    } catch (error) {
+      console.error('Error fetching unread count:', error)
+    }
+  }
 
   const handleSearch = (query: string) => {
     if (query.trim().length >= 2) {
@@ -95,10 +118,14 @@ export default function Header() {
             {!isLoading && user ? (
               <>
                 {/* Notifications */}
-                <button className="relative p-2 text-gray-600 hover:text-primary-600">
+                <Link href="/notifications" className="relative p-2 text-gray-600 hover:text-primary-600 transition-colors">
                   <Bell className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                </button>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
+                </Link>
                 
                 {/* User Menu */}
                 <div className="relative" ref={userMenuRef}>
@@ -119,6 +146,14 @@ export default function Header() {
                       </div>
                       <Link href={`/users/${user.username}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Profile
+                      </Link>
+                      <Link href="/notifications" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Notifications
+                        {unreadCount > 0 && (
+                          <span className="ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full">
+                            {unreadCount}
+                          </span>
+                        )}
                       </Link>
                       <Link href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Settings

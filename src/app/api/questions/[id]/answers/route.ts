@@ -4,6 +4,7 @@ import Question from '@/models/Question'
 import Answer from '@/models/Answer'
 import User from '@/models/User'
 import { verifyToken } from '@/lib/auth'
+import { createAnswerNotification } from '@/lib/notifications'
 
 // GET /api/questions/[id]/answers - Get all answers for a question
 export async function GET(
@@ -157,6 +158,18 @@ export async function POST(
     await User.findByIdAndUpdate(payload.userId, {
       $inc: { 'stats.answersGiven': 1 }
     })
+    
+    // Create notification for question author
+    if (question.author.toString() !== payload.userId) {
+      await createAnswerNotification(
+        question.author.toString(),
+        payload.userId,
+        params.id,
+        answer._id.toString(),
+        question.title,
+        user.username
+      )
+    }
     
     // Populate author info
     await answer.populate('author', 'username avatar reputation')
