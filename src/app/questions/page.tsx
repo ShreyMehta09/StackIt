@@ -21,6 +21,15 @@ interface Question {
   lastActivity: string
 }
 
+// Green glowing spinner component
+function GreenSpinner() {
+  return (
+    <div className="flex justify-center items-center py-16">
+      <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin "></div>
+    </div>
+  );
+}
+
 export default function QuestionsPage() {
   const searchParams = useSearchParams()
   const [questions, setQuestions] = useState<Question[]>([])
@@ -96,7 +105,7 @@ export default function QuestionsPage() {
               {loading ? 'Loading...' : `${questions.length} question${questions.length !== 1 ? 's' : ''}`}
             </p>
           </div>
-          <Link href="/ask" className="bg-[#00ff7f] text-black font-bold px-6 py-3 rounded-lg shadow-[0_0_16px_2px_#00ff7f] hover:bg-[#00e673] transition flex items-center gap-2">
+          <Link href="/ask" className="bg-[#00ff7f] text-black font-bold px-6 py-3 rounded-lg border-2 border-green-600 hover:bg-[#00e673] transition flex items-center gap-2">
             <Plus className="w-4 h-4" />
             Ask Question
           </Link>
@@ -163,32 +172,11 @@ export default function QuestionsPage() {
       {/* Questions List */}
       <div className="space-y-6 mt-6">
         {loading ? (
-          // Loading skeleton
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="rounded-lg bg-black border border-[#00ff7f33] p-6 animate-pulse shadow-[0_0_16px_2px_#00ff7f22]">
-                <div className="flex gap-4">
-                  <div className="flex flex-col items-center space-y-2 min-w-[80px]">
-                    <div className="w-8 h-4 bg-gray-200 rounded"></div>
-                    <div className="w-12 h-3 bg-gray-200 rounded"></div>
-                  </div>
-                  <div className="flex-1 space-y-3">
-                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full"></div>
-                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                    <div className="flex gap-2">
-                      <div className="h-6 bg-gray-200 rounded w-16"></div>
-                      <div className="h-6 bg-gray-200 rounded w-20"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <GreenSpinner />
         ) : questions.length > 0 ? (
           <>
             {questions.map((question) => (
-              <div key={question._id} className="rounded-lg bg-black border border-[#00ff7f33] p-6 hover:shadow-[0_0_32px_4px_#00ff7f55] transition shadow-[0_0_16px_2px_#00ff7f22]">
+              <div key={question._id} className="rounded-lg bg-black border-2 border-green-600 p-6 transition">
                 <div className="flex gap-4">
                   {/* Vote and Stats */}
                   <div className="flex flex-col items-center space-y-2 min-w-[80px] text-sm text-white/70">
@@ -293,11 +281,11 @@ export default function QuestionsPage() {
           </>
         ) : (
           // Empty State
-          <div className="rounded-lg bg-black border border-[#00ff7f33] text-center py-16 px-6 shadow-[0_0_32px_4px_#00ff7f33] flex flex-col items-center">
+          <div className="rounded-lg bg-black border-2 border-green-600 text-center py-16 px-6 flex flex-col items-center">
             <MessageSquare className="w-16 h-16 mx-auto mb-4 text-[#00ff7f] drop-shadow-[0_0_16px_#00ff7f]" />
             <h3 className="text-2xl font-bold text-white mb-4">No questions yet</h3>
             <p className="text-white/70 mb-6">Be the first to ask a question and help build our community!</p>
-            <Link href="/ask" className="bg-[#00ff7f] text-black font-bold px-6 py-3 rounded-lg shadow-[0_0_16px_2px_#00ff7f] hover:bg-[#00e673] transition">
+            <Link href="/ask" className="bg-[#00ff7f] text-black font-bold px-6 py-3 rounded-lg border-2 border-green-600 hover:bg-[#00e673] transition">
               Ask the First Question
             </Link>
           </div>
