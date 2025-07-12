@@ -189,7 +189,7 @@ export default function SearchPage() {
           <button
             type="submit"
             disabled={query.trim().length < 2}
-            className="mt-4 sm:mt-0 px-8 py-3 bg-[#00ff7f] text-black font-extrabold rounded-xl shadow-[0_0_16px_2px_#00ff7f] hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-4 sm:mt-0 bg-green-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-green-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Search
           </button>
@@ -291,27 +291,25 @@ export default function SearchPage() {
               {/* Users and tags results, similar card styling */}
               {(type === 'all' || type === 'users') && results.users.length > 0 && (
                 <div className="space-y-4 w-full">
-                  {type === 'all' && <h2 className="text-xl font-semibold text-gray-900">Users</h2>}
+                  {type === 'all' && <h2 className="text-xl font-semibold text-green-400">Users</h2>}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {results.users.map((user) => (
-                      <div key={user._id} className="rounded-lg bg-black border border-[#00ff7f33] p-6 shadow-[0_0_16px_2px_#00ff7f22] hover:shadow-[0_0_32px_4px_#00ff7f55] transition">
+                      <div key={user._id} className="rounded-lg bg-black border-2 border-green-600 p-6 transition">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
+                          <div className="w-12 h-12 bg-green-700 rounded-full flex items-center justify-center">
                             <User className="w-6 h-6 text-white" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900">
-                              <Link href={`/users/${user.username}`} className="hover:text-primary-600">
-                                <span dangerouslySetInnerHTML={{ 
-                                  __html: highlightText(user.username || '', query) 
-                                }} />
+                            <h3 className="font-semibold text-green-400">
+                              <Link href={`/users/${user.username}`} className="hover:text-green-300">
+                                {user.username}
                               </Link>
                             </h3>
-                            <p className="text-sm text-gray-600 mb-2">
+                            <p className="text-sm text-green-300 mb-2">
                               {user.reputation} reputation
                             </p>
                             {user.bio && (
-                              <p className="text-sm text-gray-600 line-clamp-2">
+                              <p className="text-sm text-zinc-400 line-clamp-2">
                                 <span dangerouslySetInnerHTML={{ 
                                   __html: highlightText(user.bio, query) 
                                 }} />
@@ -400,7 +398,7 @@ export default function SearchPage() {
 
               {/* No Results */}
               {results.questions.length === 0 && results.users.length === 0 && results.tags.length === 0 && (
-                <div className="rounded-lg bg-black border border-[#00ff7f33] text-center py-16 px-6 shadow-[0_0_32px_4px_#00ff7f33] flex flex-col items-center">
+                <div className="w-full max-w-xl rounded-lg bg-black border border-[#00ff7f33] text-center py-12 shadow-[0_0_32px_4px_#00ff7f33] flex flex-col items-center">
                   <Search className="w-20 h-20 mx-auto mb-6 text-white drop-shadow-[0_0_16px_#00ff7f]" />
                   <h3 className="text-2xl font-bold text-white mb-4">No results found</h3>
                   <p className="text-white/70 mb-8">Try adjusting your search or filter to find what you're looking for</p>
@@ -416,7 +414,7 @@ export default function SearchPage() {
               )}
             </>
           ) : (
-            <div className="rounded-lg bg-black border border-[#00ff7f33] text-center py-16 px-6 shadow-[0_0_32px_4px_#00ff7f33] flex flex-col items-center">
+            <div className="w-full max-w-xl rounded-lg bg-black border border-[#00ff7f33] text-center py-12 shadow-[0_0_32px_4px_#00ff7f33] flex flex-col items-center">
               <Search className="w-20 h-20 mx-auto mb-6 text-white drop-shadow-[0_0_16px_#00ff7f]" />
               <h3 className="text-2xl font-bold text-white mb-4">Search StackIt</h3>
               <p className="text-white/70 mb-8">Find questions, users, and tags across the platform.</p>
