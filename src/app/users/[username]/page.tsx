@@ -179,9 +179,9 @@ export default function UserProfilePage({ params }: { params: { username: string
     <div className="min-h-screen w-full bg-black flex flex-col items-center px-4 py-10">
       <div className="w-full max-w-3xl mx-auto flex flex-col space-y-10">
         {/* Profile Card */}
-        <div className="bg-black border border-[#00ff7f55] rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 shadow-[0_0_16px_2px_#00ff7f22]">
+        <div className="bg-black border border-green-700 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8">
           {/* Avatar */}
-          <div className="w-24 h-24 bg-[#00ff7f] rounded-full flex items-center justify-center shadow-[0_0_16px_2px_#00ff7f88]">
+          <div className="w-24 h-24 bg-[#00ff7f] rounded-full flex items-center justify-center">
             <User className="w-12 h-12 text-black" />
           </div>
           {/* Info */}
@@ -227,8 +227,8 @@ export default function UserProfilePage({ params }: { params: { username: string
         </div>
 
         {/* Tabs */}
-        <div className="bg-black border border-[#00ff7f33] rounded-2xl shadow-[0_0_8px_#00ff7f22]">
-          <nav className="flex gap-8 px-8 pt-6 border-b border-[#222]">
+        <div className="bg-black border border-green-700 rounded-2xl">
+          <nav className="flex gap-8 px-8 pt-6 border-b border-green-900">
             {['overview', 'questions', 'answers'].map((tab) => (
               <button
                 key={tab}
@@ -236,7 +236,7 @@ export default function UserProfilePage({ params }: { params: { username: string
                 className={`pb-3 px-1 border-b-2 font-semibold text-lg transition-all
                   ${activeTab === tab
                     ? 'border-[#00ff7f] text-[#00ff7f]'
-                    : 'border-transparent text-white hover:text-[#00ff7f88] hover:border-[#00ff7f44]'}
+                    : 'border-transparent text-white hover:text-green-400 hover:border-green-700'}
                 `}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -254,71 +254,57 @@ export default function UserProfilePage({ params }: { params: { username: string
             {activeTab === 'overview' && (
               <div className="space-y-10">
                 {/* Recent Questions */}
-                {activity.recentQuestions && activity.recentQuestions.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Recent Questions</h3>
-                    <div className="space-y-4">
-                      {activity.recentQuestions.map((question) => (
-                        <div key={question._id} className="bg-[#111] border border-[#00ff7f33] rounded-xl p-4">
-                          <h4 className="font-medium text-white hover:text-[#00ff7f]">
-                            <Link href={`/questions/${question._id}`}>{question.title}</Link>
-                          </h4>
-                          <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
-                            <span>{question.voteScore} votes</span>
-                            <span>{question.answerCount} answers</span>
-                            <span>{question.views} views</span>
-                            <span>{formatTimeAgo(question.createdAt)}</span>
-                          </div>
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-white mb-4">Recent Questions</h2>
+                  {activity.recentQuestions && activity.recentQuestions.length > 0 ? (
+                    activity.recentQuestions.map((q) => (
+                      <div key={q._id} className="bg-black border border-green-700 rounded-xl p-5 mb-4">
+                        <h4 className="font-medium text-white hover:text-[#00ff7f]">
+                          <Link href={`/questions/${q._id}`}>{q.title}</Link>
+                        </h4>
+                        <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
+                          <span>{q.voteScore} votes</span>
+                          <span>{q.answerCount} answers</span>
+                          <span>{q.views} views</span>
+                          <span>{formatTimeAgo(q.createdAt)}</span>
                         </div>
-                      ))}
-                    </div>
-                    {user.stats.questionsAsked > 5 && (
-                      <div className="mt-4">
-                        <button
-                          onClick={() => handleTabChange('questions')}
-                          className="text-[#00ff7f] hover:text-white font-medium"
-                        >
-                          View all questions →
-                        </button>
                       </div>
-                    )}
-                  </div>
-                )}
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-400">
+                      <MessageSquare className="w-12 h-12 mx-auto mb-4 text-[#00ff7f] opacity-70" />
+                      <p>No recent questions.</p>
+                    </div>
+                  )}
+                </div>
                 {/* Recent Answers */}
-                {activity.recentAnswers && activity.recentAnswers.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Recent Answers</h3>
-                    <div className="space-y-4">
-                      {activity.recentAnswers.map((answer) => (
-                        <div key={answer._id} className="bg-[#111] border border-green-400/30 rounded-xl p-4">
-                          <div className="flex items-center gap-2 mb-1">
-                            {answer.isAccepted && (
-                              <Check className="w-4 h-4 text-green-400" />
-                            )}
-                            <h4 className="font-medium text-white hover:text-[#00ff7f]">
-                              <Link href={`/questions/${answer.question._id}`}>{answer.question.title}</Link>
-                            </h4>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-400">
-                            <span>{answer.voteScore} votes</span>
-                            {answer.isAccepted && <span className="text-green-400">Accepted</span>}
-                            <span>{formatTimeAgo(answer.createdAt)}</span>
-                          </div>
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-white mb-4">Recent Answers</h2>
+                  {activity.recentAnswers && activity.recentAnswers.length > 0 ? (
+                    activity.recentAnswers.map((a) => (
+                      <div key={a._id} className="bg-black border border-green-700 rounded-xl p-5 mb-4">
+                        <div className="flex items-center gap-2 mb-1">
+                          {a.isAccepted && (
+                            <Check className="w-4 h-4 text-green-400" />
+                          )}
+                          <h4 className="font-medium text-white hover:text-[#00ff7f]">
+                            <Link href={`/questions/${a.question._id}`}>{a.question.title}</Link>
+                          </h4>
                         </div>
-                      ))}
-                    </div>
-                    {user.stats.answersGiven > 5 && (
-                      <div className="mt-4">
-                        <button
-                          onClick={() => handleTabChange('answers')}
-                          className="text-[#00ff7f] hover:text-white font-medium"
-                        >
-                          View all answers →
-                        </button>
+                        <div className="flex items-center gap-4 text-sm text-gray-400">
+                          <span>{a.voteScore} votes</span>
+                          {a.isAccepted && <span className="text-green-400">Accepted</span>}
+                          <span>{formatTimeAgo(a.createdAt)}</span>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                )}
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-400">
+                      <MessageSquare className="w-12 h-12 mx-auto mb-4 text-[#00ff7f] opacity-70" />
+                      <p>No recent answers.</p>
+                    </div>
+                  )}
+                </div>
                 {/* Empty State */}
                 {(!activity.recentQuestions || activity.recentQuestions.length === 0) &&
                  (!activity.recentAnswers || activity.recentAnswers.length === 0) && (
