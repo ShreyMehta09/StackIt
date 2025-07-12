@@ -1,3 +1,4 @@
+
 # StackIt - Q&A Forum
 
 A minimal question-and-answer forum web app built with Next.js, TypeScript, and Tailwind CSS.
