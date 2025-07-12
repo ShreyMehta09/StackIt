@@ -72,10 +72,10 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center drop-shadow-[0_0_10px_#22c55e]">
+            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
               <span className="text-black font-bold text-lg">S</span>
             </div>
-            <span className="text-xl font-bold text-green-400 drop-shadow-[0_0_6px_#22c55e]">StackIt</span>
+            <span className="text-xl font-bold text-green-400">StackIt</span>
           </Link>
 
           {/* Search Bar - Desktop */}

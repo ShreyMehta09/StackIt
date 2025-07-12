@@ -91,18 +91,18 @@ export default function UsersPage() {
           {/* Search */}
           <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
             <div className="relative flex-1 md:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ff7f] w-6 h-6 drop-shadow-[0_0_8px_#00ff7f]" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ff7f] w-6 h-6" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search users..."
-                className="w-full pl-12 pr-4 py-3 bg-black border border-[#00ff7f55] rounded-2xl text-white placeholder-white/60 shadow-[0_0_16px_2px_#00ff7f22] focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f] transition"
+                className="w-full pl-12 pr-4 py-3 bg-black border-2 border-green-600 rounded-2xl text-white placeholder-white/60 focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f] transition"
               />
             </div>
             <button
               type="submit"
-              className="bg-[#00ff7f] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#00ff7fcc] transition drop-shadow-[0_0_8px_#00ff7f]"
+              className="bg-[#00ff7f] text-black px-4 py-2 rounded-lg font-medium hover:bg-[#00ff7fcc] transition border-2 border-green-600"
             >
               Search
             </button>
@@ -131,7 +131,7 @@ export default function UsersPage() {
           {loading ? (
             // Loading skeleton
             [...Array(8)].map((_, i) => (
-              <div key={i} className="bg-black border border-[#00ff7f33] rounded-2xl p-6 flex items-center gap-6 animate-pulse shadow-[0_0_16px_2px_#00ff7f22]">
+              <div key={i} className="bg-black border-2 border-green-600 rounded-2xl p-6 flex items-center gap-6 animate-pulse">
                 <div className="w-16 h-16 bg-[#222] rounded-full flex-shrink-0" />
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-4">
@@ -150,9 +150,9 @@ export default function UsersPage() {
           ) : users.length > 0 ? (
             users.map((user) => (
               <Link key={user._id} href={`/users/${user.username}`}>
-                <div className="bg-black border border-[#00ff7f55] rounded-2xl p-6 flex items-center gap-6 hover:shadow-[0_0_24px_4px_#00ff7f88] transition-shadow cursor-pointer shadow-[0_0_16px_2px_#00ff7f22]">
+                <div className="bg-black rounded-2xl p-6 flex items-center gap-6 cursor-pointer border border-green-700 shadow-[0_0_6px_1px_#22c55e33] hover:shadow-[0_0_16px_4px_#22c55e66] transition-shadow mb-6">
                   {/* Avatar */}
-                  <div className="w-16 h-16 bg-[#00ff7f] rounded-full flex items-center justify-center flex-shrink-0 shadow-[0_0_16px_2px_#00ff7f88]">
+                  <div className="w-16 h-16 bg-[#00ff7f] rounded-full flex items-center justify-center flex-shrink-0">
                     <User className="w-8 h-8 text-black" />
                   </div>
 
@@ -201,7 +201,7 @@ export default function UsersPage() {
             ))
           ) : (
             // Empty State
-            <div className="bg-black border border-[#00ff7f55] rounded-2xl p-12 text-center flex flex-col items-center shadow-[0_0_16px_2px_#00ff7f22]">
+            <div className="bg-black border-2 border-green-600 rounded-2xl p-12 text-center flex flex-col items-center">
               <User className="w-16 h-16 mb-4 text-[#00ff7f] drop-shadow-[0_0_8px_#00ff7f]" />
               <h3 className="text-2xl font-semibold text-white mb-2">No users yet</h3>
               <p className="text-gray-400">User profiles will appear here once people start joining the community.</p>
