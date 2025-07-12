@@ -57,22 +57,22 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="card">
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="w-full max-w-md p-8 bg-black rounded-2xl shadow-lg " style={{ boxShadow: '2px 2px 30px 5px #22c55e88' }}>
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Join StackIt</h1>
-          <p className="text-gray-600 mt-2">Create your account to start asking and answering questions</p>
+          <h1 className="text-2xl font-bold text-white">Join StackIt</h1>
+          <p className="text-gray-300 mt-2">Create your account to start asking and answering questions</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="mb-6 p-4 bg-red-900/20 border border-red-500 rounded-lg">
+            <p className="text-red-400 text-sm">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-gray-200 mb-2">
               Username
             </label>
             <input
@@ -82,7 +82,7 @@ export default function RegisterPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-zinc-500"
               placeholder="Choose a username"
               disabled={isLoading}
             />
@@ -92,7 +92,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
               Email address
             </label>
             <input
@@ -102,14 +102,14 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-zinc-500"
               placeholder="Enter your email"
               disabled={isLoading}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
               Password
             </label>
             <input
@@ -119,7 +119,7 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-zinc-500"
               placeholder="Create a password"
               disabled={isLoading}
             />
@@ -129,7 +129,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-2">
               Confirm Password
             </label>
             <input
@@ -139,12 +139,12 @@ export default function RegisterPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-zinc-500"
               placeholder="Confirm your password"
               disabled={isLoading}
             />
             {confirmPassword && password !== confirmPassword && (
-              <p className="text-xs text-red-500 mt-1">
+              <p className="text-xs text-red-400 mt-1">
                 Passwords do not match
               </p>
             )}
@@ -158,16 +158,16 @@ export default function RegisterPage() {
               checked={acceptTerms}
               onChange={(e) => setAcceptTerms(e.target.checked)}
               required
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
+              className="h-4 w-4 text-green-500 focus:ring-green-500 border-zinc-700 bg-zinc-900 rounded mt-1"
               disabled={isLoading}
             />
-            <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+            <label htmlFor="terms" className="ml-2 block text-sm text-gray-300">
               I agree to the{' '}
-              <a href="#" className="text-primary-600 hover:text-primary-500">
+              <a href="#" className="text-green-400 hover:text-green-300 underline">
                 Terms of Service
               </a>{' '}
               and{' '}
-              <a href="#" className="text-primary-600 hover:text-primary-500">
+              <a href="#" className="text-green-400 hover:text-green-300 underline">
                 Privacy Policy
               </a>
             </label>
@@ -176,16 +176,16 @@ export default function RegisterPage() {
           <button 
             type="submit" 
             disabled={isLoading || !username || !email || !password || !confirmPassword || !acceptTerms}
-            className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-green-500 hover:bg-green-700 text-black font-semibold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Creating account...' : 'Create account'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-400">
             Already have an account?{' '}
-            <Link href="/login" className="text-primary-600 hover:text-primary-500 font-medium">
+            <Link href="/login" className="text-green-400 hover:text-green-300 font-medium underline">
               Sign in
             </Link>
           </p>
