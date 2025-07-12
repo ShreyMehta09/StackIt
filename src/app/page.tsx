@@ -34,12 +34,22 @@ export default function HomePage() {
 
   const fetchData = async () => {
     try {
+      // Fetch platform statistics
+      const statsResponse = await fetch('/api/stats')
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json()
+        setStats(statsData)
+      } else {
+        console.error('Failed to fetch stats:', statsResponse.status)
+      }
+
       // Fetch recent questions
       const questionsResponse = await fetch('/api/questions?limit=5&sort=newest')
       if (questionsResponse.ok) {
         const questionsData = await questionsResponse.json()
-        setRecentQuestions(questionsData.questions)
-        setStats(prev => ({ ...prev, totalQuestions: questionsData.pagination.total || questionsData.questions.length }))
+        setRecentQuestions(questionsData.questions || [])
+      } else {
+        console.error('Failed to fetch questions:', questionsResponse.status)
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -85,21 +95,21 @@ export default function HomePage() {
         <div className="card text-center">
           <MessageSquare className="w-12 h-12 text-primary-600 mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            {loading ? '...' : stats.totalQuestions}
+            {loading ? '...' : stats.totalQuestions.toLocaleString()}
           </h3>
           <p className="text-gray-600">Questions Asked</p>
         </div>
         <div className="card text-center">
           <Users className="w-12 h-12 text-primary-600 mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            {loading ? '...' : stats.totalUsers}
+            {loading ? '...' : stats.totalUsers.toLocaleString()}
           </h3>
-          <p className="text-gray-600">Active Users</p>
+          <p className="text-gray-600">Registered Users</p>
         </div>
         <div className="card text-center">
           <Award className="w-12 h-12 text-primary-600 mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            {loading ? '...' : stats.totalAnswers}
+            {loading ? '...' : stats.totalAnswers.toLocaleString()}
           </h3>
           <p className="text-gray-600">Answers Given</p>
         </div>
@@ -182,6 +192,43 @@ export default function HomePage() {
             </Link>
           </div>
         )}
+      </div>
+
+      {/* Community Info Section */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="card">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">Join Our Community</h3>
+          <p className="text-gray-600 mb-4">
+            Connect with {stats.totalUsers > 0 ? stats.totalUsers.toLocaleString() : 'thousands of'} developers, 
+            share knowledge, and get help with your coding challenges.
+          </p>
+          <div className="flex gap-3">
+            <Link href="/register" className="btn-primary">
+              Sign Up
+            </Link>
+            <Link href="/users" className="btn-secondary">
+              Browse Users
+            </Link>
+          </div>
+        </div>
+
+        <div className="card">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">How It Works</h3>
+          <div className="space-y-3 text-sm text-gray-600">
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-primary-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
+              <p>Ask questions about programming challenges you're facing</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-primary-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div>
+              <p>Get answers from experienced developers in the community</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-primary-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</div>
+              <p>Vote on the best answers and build your reputation</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
