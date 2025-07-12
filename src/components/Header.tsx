@@ -113,6 +113,9 @@ export default function Header() {
               <Link href="/ask" className="block py-2 text-primary-600 hover:text-primary-700 font-medium">
                 Ask Question
               </Link>
+              <Link href="/editor-demo" className="block py-2 text-gray-500 hover:text-gray-700 font-medium text-sm">
+                Editor Demo
+              </Link>
             </nav>
           </div>
         )}

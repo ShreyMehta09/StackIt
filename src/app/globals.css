@@ -5,6 +5,31 @@
 @layer base {
   html {
     font-family: system-ui, sans-serif;
+    direction: ltr;
+  }
+  
+  body {
+    direction: ltr;
+  }
+  
+  [contenteditable] {
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: bidi-override !important;
+    writing-mode: lr-tb !important;
+  }
+  
+  [contenteditable] *,
+  [contenteditable] p,
+  [contenteditable] div,
+  [contenteditable] span,
+  [contenteditable] strong,
+  [contenteditable] em,
+  [contenteditable] b,
+  [contenteditable] i {
+    direction: ltr !important;
+    unicode-bidi: bidi-override !important;
+    text-align: left !important;
   }
 }
 

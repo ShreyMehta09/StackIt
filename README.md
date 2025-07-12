@@ -56,11 +56,25 @@ src/
 ## Development Roadmap
 
 - [x] Basic project setup and navigation
-- [ ] Rich text editor implementation
-- [ ] Question posting functionality
+- [x] Rich text editor implementation
+- [ ] Question posting functionality with backend
 - [ ] Answer system
 - [ ] Voting mechanism
 - [ ] User authentication
 - [ ] Notification system
 - [ ] Search functionality
 - [ ] Admin moderation tools
+
+## Rich Text Editor Features
+
+The editor supports:
+- **Text Formatting**: Bold, italic, strikethrough
+- **Lists**: Bullet and numbered lists
+- **Links**: Insert hyperlinks with custom text
+- **Images**: Upload and embed images
+- **Emojis**: Quick emoji picker with common emojis
+- **Alignment**: Left, center, right text alignment
+- **History**: Undo/redo functionality
+- **Keyboard Shortcuts**: Standard shortcuts (Ctrl+B, Ctrl+I, etc.)
+
+Visit `/editor-demo` to test all editor features.
