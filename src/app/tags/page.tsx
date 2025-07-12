@@ -2,33 +2,31 @@ import { Search, Hash } from 'lucide-react'
 
 export default function TagsPage() {
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Tags</h1>
-        <p className="text-gray-600 mt-2">
-          Browse questions by topic. Tags help organize and find relevant content.
-        </p>
-      </div>
+    <div className="min-h-screen w-full bg-black flex flex-col items-center px-4 py-10">
+      <div className="w-full max-w-xl flex flex-col items-center space-y-10">
+        {/* Header */}
+        <div className="w-full">
+          <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">Tags</h1>
+          <p className="text-gray-400 text-lg">Browse questions by topic. Tags help organize and find relevant content.</p>
+        </div>
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <input
-          type="text"
-          placeholder="Search tags..."
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-        />
-      </div>
+        {/* Search */}
+        <div className="relative w-full">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ff7f] w-6 h-6 drop-shadow-[0_0_8px_#00ff7f]" />
+          <input
+            type="text"
+            placeholder="Search tags..."
+            className="w-full pl-12 pr-4 py-3 bg-black border border-[#00ff7f55] rounded-2xl text-white placeholder-white/60 shadow-[0_0_16px_2px_#00ff7f22] focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f] transition"
+          />
+        </div>
 
-      {/* Tags Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Empty State */}
-        <div className="col-span-full">
-          <div className="card text-center py-12">
-            <Hash className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No tags yet</h3>
-            <p className="text-gray-600">Tags will appear here once questions are posted with tags.</p>
+        {/* Tags Grid / Empty State */}
+        <div className="w-full flex flex-col items-center justify-center pt-10">
+          {/* Empty State */}
+          <div className="flex flex-col items-center justify-center">
+            <Hash className="w-24 h-24 mb-6 text-[#00ff7f] drop-shadow-[0_0_32px_#00ff7f]" />
+            <h3 className="text-2xl font-semibold text-white mb-2">No tags yet</h3>
+            <p className="text-gray-400">Tags will appear here once questions are posted with tags.</p>
           </div>
         </div>
       </div>
