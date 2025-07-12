@@ -187,7 +187,7 @@ export default function Header() {
                 </div>
               </>
             ) : !isLoading ? (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-8 ml-8">
                 <Link href="/login" className="text-zinc-200 hover:text-green-400 font-medium">
                   Log in
                 </Link>
