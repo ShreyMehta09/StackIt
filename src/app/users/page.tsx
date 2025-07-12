@@ -144,19 +144,25 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Users Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Users List - Horizontal Layout */}
+      <div className="space-y-4">
         {loading ? (
           // Loading skeleton
           [...Array(8)].map((_, i) => (
             <div key={i} className="card animate-pulse">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
-                <div className="h-5 bg-gray-200 rounded w-24 mx-auto mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-16 mx-auto mb-4"></div>
-                <div className="space-y-2">
-                  <div className="h-3 bg-gray-200 rounded w-full"></div>
-                  <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto"></div>
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center gap-4">
+                    <div className="h-6 bg-gray-200 rounded w-32"></div>
+                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                  </div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="flex gap-6">
+                    <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -165,48 +171,72 @@ export default function UsersPage() {
           users.map((user) => (
             <Link key={user._id} href={`/users/${user.username}`}>
               <div className="card hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="text-center">
+                <div className="flex items-center gap-6">
                   {/* Avatar */}
-                  <div className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
                     <User className="w-8 h-8 text-white" />
                   </div>
 
                   {/* User Info */}
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{user.username}</h3>
-                  <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-3">
-                    <Award className="w-4 h-4" />
-                    <span>{user.reputation} reputation</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-4 mb-2">
+                      <h3 className="text-xl font-semibold text-gray-900">{user.username}</h3>
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <Award className="w-4 h-4 text-yellow-600" />
+                        <span className="font-medium">{user.reputation}</span>
+                        <span>reputation</span>
+                      </div>
+                    </div>
+
+                    {/* Bio */}
+                    {user.bio && (
+                      <p className="text-gray-600 mb-3 line-clamp-2">
+                        {user.bio}
+                      </p>
+                    )}
+
+                    {/* Stats and Join Date */}
+                    <div className="flex items-center gap-6 text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <HelpCircle className="w-4 h-4 text-primary-600" />
+                        <span className="font-medium text-gray-900">{user.stats.questionsAsked}</span>
+                        <span>questions</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MessageSquare className="w-4 h-4 text-green-600" />
+                        <span className="font-medium text-gray-900">{user.stats.answersGiven}</span>
+                        <span>answers</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>Joined {formatTimeAgo(user.joinedAt)}</span>
+                      </div>
+                    </div>
+
+                    {/* Additional Stats */}
+                    <div className="flex items-center gap-6 text-xs text-gray-400 mt-2">
+                      <span>{user.stats.upvotesReceived} upvotes received</span>
+                      <span>{user.stats.acceptedAnswers} accepted answers</span>
+                    </div>
                   </div>
 
-                  {/* Bio */}
-                  {user.bio && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                      {user.bio}
-                    </p>
-                  )}
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-4 text-center text-sm">
-                    <div>
-                      <div className="flex items-center justify-center gap-1 text-primary-600">
-                        <HelpCircle className="w-4 h-4" />
-                        <span className="font-medium">{user.stats.questionsAsked}</span>
-                      </div>
-                      <div className="text-xs text-gray-500">Questions</div>
+                  {/* Right side stats */}
+                  <div className="hidden md:flex flex-col items-end text-right space-y-1">
+                    <div className="text-2xl font-bold text-primary-600">
+                      {user.reputation}
                     </div>
-                    <div>
-                      <div className="flex items-center justify-center gap-1 text-green-600">
-                        <MessageSquare className="w-4 h-4" />
-                        <span className="font-medium">{user.stats.answersGiven}</span>
+                    <div className="text-xs text-gray-500">reputation</div>
+                    
+                    <div className="flex gap-4 mt-2 text-sm">
+                      <div className="text-center">
+                        <div className="font-semibold text-gray-900">{user.stats.questionsAsked}</div>
+                        <div className="text-xs text-gray-500">questions</div>
                       </div>
-                      <div className="text-xs text-gray-500">Answers</div>
+                      <div className="text-center">
+                        <div className="font-semibold text-gray-900">{user.stats.answersGiven}</div>
+                        <div className="text-xs text-gray-500">answers</div>
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Join Date */}
-                  <div className="flex items-center justify-center gap-1 text-xs text-gray-500 mt-4">
-                    <Calendar className="w-3 h-3" />
-                    <span>Joined {formatTimeAgo(user.joinedAt)}</span>
                   </div>
                 </div>
               </div>
@@ -214,14 +244,12 @@ export default function UsersPage() {
           ))
         ) : (
           // Empty State
-          <div className="col-span-full">
-            <div className="card text-center py-12">
-              <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No users found</h3>
-              <p className="text-gray-600">
-                {searchQuery ? 'Try adjusting your search terms.' : 'No users have joined yet.'}
-              </p>
-            </div>
+          <div className="card text-center py-12">
+            <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No users found</h3>
+            <p className="text-gray-600">
+              {searchQuery ? 'Try adjusting your search terms.' : 'No users have joined yet.'}
+            </p>
           </div>
         )}
       </div>

@@ -6,7 +6,7 @@ interface User {
   id: string
   username: string
   email: string
-  role: 'guest' | 'user' | 'admin'
+  role: 'guest' | 'user' | 'moderator' | 'admin'
   reputation: number
   avatar?: string
   joinedAt: string
@@ -46,6 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       if (response.ok) {
         const data = await response.json()
+        console.log('Auth check successful, user:', data.user) // Debug log
         setUser(data.user)
       } else {
         console.log('Auth check failed with status:', response.status)
@@ -70,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json()
 
       if (response.ok) {
+        console.log('Login successful, user:', data.user) // Debug log
         setUser(data.user)
         return { success: true }
       } else {

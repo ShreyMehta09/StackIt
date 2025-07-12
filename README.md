@@ -101,7 +101,6 @@ src/
 - [x] User profile pages with activity tracking
 - [x] User directory with search and filtering
 - [x] Notification system with real-time updates
-- [ ] Comment system for questions/answers
 - [ ] Admin moderation tools
 - [ ] Email notifications
 

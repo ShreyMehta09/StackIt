@@ -7,6 +7,10 @@ export interface IAnswer extends Document {
   upvotes: mongoose.Types.ObjectId[]
   downvotes: mongoose.Types.ObjectId[]
   isAccepted: boolean
+  isLocked: boolean
+  isHidden: boolean
+  isDeleted: boolean
+  reportCount: number
   createdAt: Date
   updatedAt: Date
   editHistory: {
@@ -44,6 +48,22 @@ const AnswerSchema = new Schema<IAnswer>({
     type: Boolean,
     default: false
   },
+  isLocked: {
+    type: Boolean,
+    default: false
+  },
+  isHidden: {
+    type: Boolean,
+    default: false
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  reportCount: {
+    type: Number,
+    default: 0
+  },
   editHistory: [{
     editedAt: {
       type: Date,
@@ -67,6 +87,9 @@ AnswerSchema.index({ author: 1 })
 AnswerSchema.index({ question: 1 })
 AnswerSchema.index({ createdAt: -1 })
 AnswerSchema.index({ isAccepted: -1 })
+AnswerSchema.index({ isDeleted: 1 })
+AnswerSchema.index({ isLocked: 1 })
+AnswerSchema.index({ reportCount: 1 })
 
 // Virtual for vote score
 AnswerSchema.virtual('voteScore').get(function() {

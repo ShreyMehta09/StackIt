@@ -13,9 +13,6 @@ export interface IQuestion extends Document {
   isResolved: boolean
   isPinned: boolean
   isLocked: boolean
-  isHidden: boolean
-  isDeleted: boolean
-  reportCount: number
   createdAt: Date
   updatedAt: Date
   lastActivity: Date
@@ -80,18 +77,6 @@ const QuestionSchema = new Schema<IQuestion>({
     type: Boolean,
     default: false
   },
-  isHidden: {
-    type: Boolean,
-    default: false
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false
-  },
-  reportCount: {
-    type: Number,
-    default: 0
-  },
   lastActivity: {
     type: Date,
     default: Date.now
@@ -111,10 +96,6 @@ QuestionSchema.index({ tags: 1 })
 QuestionSchema.index({ createdAt: -1 })
 QuestionSchema.index({ lastActivity: -1 })
 QuestionSchema.index({ views: -1 })
-QuestionSchema.index({ isDeleted: 1 })
-QuestionSchema.index({ isLocked: 1 })
-QuestionSchema.index({ isPinned: 1 })
-QuestionSchema.index({ reportCount: 1 })
 // Note: slug index is created automatically by unique: true
 QuestionSchema.index({ title: 'text', content: 'text' })
 
