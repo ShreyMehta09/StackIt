@@ -1,6 +1,61 @@
+'use client'
+
 import Link from 'next/link'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function RegisterPage() {
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [acceptTerms, setAcceptTerms] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  
+  const { register } = useAuth()
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
+
+    // Client-side validation
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      setIsLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long')
+      setIsLoading(false)
+      return
+    }
+
+    if (!acceptTerms) {
+      setError('You must accept the Terms of Service and Privacy Policy')
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const result = await register(username, email, password, confirmPassword)
+      
+      if (result.success) {
+        router.push('/')
+      } else {
+        setError(result.error || 'Registration failed')
+      }
+    } catch (error) {
+      setError('An unexpected error occurred')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="max-w-md mx-auto">
       <div className="card">
@@ -9,7 +64,13 @@ export default function RegisterPage() {
           <p className="text-gray-600 mt-2">Create your account to start asking and answering questions</p>
         </div>
 
-        <form className="space-y-6">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
               Username
@@ -18,10 +79,16 @@ export default function RegisterPage() {
               type="text"
               id="username"
               name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="Choose a username"
+              disabled={isLoading}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              3-30 characters, letters, numbers, and underscores only
+            </p>
           </div>
 
           <div>
@@ -32,9 +99,12 @@ export default function RegisterPage() {
               type="email"
               id="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="Enter your email"
+              disabled={isLoading}
             />
           </div>
 
@@ -46,10 +116,16 @@ export default function RegisterPage() {
               type="password"
               id="password"
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="Create a password"
+              disabled={isLoading}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              At least 6 characters
+            </p>
           </div>
 
           <div>
@@ -60,19 +136,30 @@ export default function RegisterPage() {
               type="password"
               id="confirmPassword"
               name="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="Confirm your password"
+              disabled={isLoading}
             />
+            {confirmPassword && password !== confirmPassword && (
+              <p className="text-xs text-red-500 mt-1">
+                Passwords do not match
+              </p>
+            )}
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-start">
             <input
               id="terms"
               name="terms"
               type="checkbox"
+              checked={acceptTerms}
+              onChange={(e) => setAcceptTerms(e.target.checked)}
               required
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
+              disabled={isLoading}
             />
             <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
               I agree to the{' '}
@@ -86,8 +173,12 @@ export default function RegisterPage() {
             </label>
           </div>
 
-          <button type="submit" className="w-full btn-primary">
-            Create account
+          <button 
+            type="submit" 
+            disabled={isLoading || !username || !email || !password || !confirmPassword || !acceptTerms}
+            className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Creating account...' : 'Create account'}
           </button>
         </form>
 

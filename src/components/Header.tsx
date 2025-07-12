@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Search, Bell, User, Menu, X, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -9,6 +9,21 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const { user, logout, isLoading } = useAuth()
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -58,7 +73,7 @@ export default function Header() {
                 </button>
                 
                 {/* User Menu */}
-                <div className="relative">
+                <div className="relative" ref={userMenuRef}>
                   <button 
                     className="flex items-center space-x-2 text-gray-700 hover:text-primary-600"
                     onClick={() => setShowUserMenu(!showUserMenu)}

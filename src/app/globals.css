@@ -45,4 +45,11 @@
   .card {
     @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
   }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }

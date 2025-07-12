@@ -94,8 +94,15 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB()
     
-    // Get token from cookie
-    const token = request.cookies.get('token')?.value
+    // Get token from cookie or Authorization header
+    let token = request.cookies.get('token')?.value
+    
+    if (!token) {
+      const authHeader = request.headers.get('authorization')
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7)
+      }
+    }
     
     if (!token) {
       return NextResponse.json(
@@ -108,6 +115,15 @@ export async function POST(request: NextRequest) {
     if (!payload) {
       return NextResponse.json(
         { error: 'Invalid token' },
+        { status: 401 }
+      )
+    }
+    
+    // Verify user exists
+    const user = await User.findById(payload.userId)
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
         { status: 401 }
       )
     }

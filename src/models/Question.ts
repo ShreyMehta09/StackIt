@@ -84,7 +84,7 @@ const QuestionSchema = new Schema<IQuestion>({
   slug: {
     type: String,
     unique: true,
-    required: true
+    required: false // Will be generated automatically
   }
 }, {
   timestamps: true
@@ -96,7 +96,7 @@ QuestionSchema.index({ tags: 1 })
 QuestionSchema.index({ createdAt: -1 })
 QuestionSchema.index({ lastActivity: -1 })
 QuestionSchema.index({ views: -1 })
-QuestionSchema.index({ slug: 1 })
+// Note: slug index is created automatically by unique: true
 QuestionSchema.index({ title: 'text', content: 'text' })
 
 // Virtual for vote score
@@ -134,8 +134,8 @@ QuestionSchema.methods.updateLastActivity = function() {
   return this.save()
 }
 
-// Pre-save middleware to generate slug
-QuestionSchema.pre('save', function(next) {
+// Pre-validate middleware to generate slug before validation
+QuestionSchema.pre('validate', function(next) {
   if (this.isNew && !this.slug) {
     this.generateSlug()
   }
