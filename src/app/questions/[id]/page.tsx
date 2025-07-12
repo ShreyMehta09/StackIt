@@ -330,7 +330,12 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <div className="font-medium text-blue-900">{question.author.username}</div>
+                    <Link 
+                      href={`/users/${question.author.username}`}
+                      className="font-medium text-blue-900 hover:text-blue-700 transition-colors"
+                    >
+                      {question.author.username}
+                    </Link>
                     <div className="text-xs text-blue-600">{question.author.reputation} reputation</div>
                   </div>
                 </div>
@@ -446,7 +451,12 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
                             <User className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <div className="font-medium text-blue-900">{answer.author.username}</div>
+                            <Link 
+                              href={`/users/${answer.author.username}`}
+                              className="font-medium text-blue-900 hover:text-blue-700 transition-colors"
+                            >
+                              {answer.author.username}
+                            </Link>
                             <div className="text-xs text-blue-600">{answer.author.reputation} reputation</div>
                           </div>
                         </div>

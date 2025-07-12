@@ -13,9 +13,15 @@ A minimal question-and-answer forum web app built with Next.js, TypeScript, and 
 - **Voting System**: Upvote/downvote questions and answers with reputation tracking
 - **Answer Acceptance**: Question authors can accept the best answer to mark questions as resolved
 - **Reputation System**: Earn reputation through upvotes (+10), accepted answers (+15), lose through downvotes (-2)
-- **Tagging**: Organize questions with relevant tags for filtering and search
+- **Advanced Search**: Full-text search across questions, users, and tags with filtering and sorting
+- **Tag System**: Organize questions with flexible tags (supports dots, underscores, special chars)
+- **Tag Filtering**: Filter questions by specific tags with seamless navigation
 - **Real-time Updates**: Optimistic UI updates for votes and answer submissions
 - **Responsive Design**: Mobile-friendly interface with loading states and error handling
+- **Global Search**: Header search bar available on all pages with instant results
+- **Search Highlighting**: Visual emphasis on matching search terms in results
+- **Pagination**: Efficient navigation through large result sets
+- **URL State Management**: Shareable URLs with preserved search and filter states
 - **Notifications**: Get notified for replies, comments, and @mentions (planned)
 
 ## Getting Started
@@ -88,8 +94,12 @@ src/
 - [x] Answer acceptance system
 - [x] Reputation tracking and user statistics
 - [x] Responsive UI with loading states
-- [ ] Search functionality with full-text search
-- [ ] User profile pages
+- [x] Search functionality with full-text search
+- [x] Advanced search filters and sorting
+- [x] Tag system with flexible validation
+- [x] Global search integration
+- [x] User profile pages with activity tracking
+- [x] User directory with search and filtering
 - [ ] Notification system
 - [ ] Comment system for questions/answers
 - [ ] Admin moderation tools
@@ -179,3 +189,10 @@ npm run dev
 - `POST /api/answers/[id]/vote` - Vote on answer (authenticated)
 - `POST /api/answers/[id]/accept` - Accept answer (question author only)
 - `DELETE /api/answers/[id]/accept` - Unaccept answer (question author only)
+
+### Search
+- `GET /api/search` - Search across questions, users, and tags with filtering and sorting
+
+### Users
+- `GET /api/users` - Get all users with pagination and sorting
+- `GET /api/users/[username]` - Get user profile with activity data

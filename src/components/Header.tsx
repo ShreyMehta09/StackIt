@@ -117,7 +117,7 @@ export default function Header() {
                         <p className="text-sm font-medium text-gray-900">{user.username}</p>
                         <p className="text-xs text-gray-500">{user.reputation} reputation</p>
                       </div>
-                      <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <Link href={`/users/${user.username}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Profile
                       </Link>
                       <Link href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
