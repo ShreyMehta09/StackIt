@@ -19,7 +19,7 @@ const TagSchema = new Schema<ITag>({
     trim: true,
     minlength: 2,
     maxlength: 30,
-    match: /^[a-z0-9-]+$/
+    match: /^[a-z0-9\-\.\_\+\#]+$/
   },
   description: {
     type: String,

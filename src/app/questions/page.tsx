@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Plus, MessageSquare, ArrowUp, ArrowDown, Eye, Clock, User } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { Plus, MessageSquare, ArrowUp, ArrowDown, Eye, Clock, User, X } from 'lucide-react'
 
 interface Question {
   _id: string
@@ -21,16 +22,23 @@ interface Question {
 }
 
 export default function QuestionsPage() {
+  const searchParams = useSearchParams()
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const [currentSort, setCurrentSort] = useState('newest')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
-  const fetchQuestions = async (sort = 'newest', page = 1) => {
+  const fetchQuestions = async (sort = 'newest', page = 1, tag?: string) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/questions?sort=${sort}&page=${page}&limit=10`)
+      let url = `/api/questions?sort=${sort}&page=${page}&limit=10`
+      if (tag) {
+        url += `&tag=${encodeURIComponent(tag)}`
+      }
+      
+      const response = await fetch(url)
       const data = await response.json()
       
       if (response.ok) {
@@ -47,8 +55,10 @@ export default function QuestionsPage() {
   }
 
   useEffect(() => {
-    fetchQuestions(currentSort, currentPage)
-  }, [currentSort, currentPage])
+    const tag = searchParams.get('tag')
+    setSelectedTag(tag)
+    fetchQuestions(currentSort, currentPage, tag || undefined)
+  }, [currentSort, currentPage, searchParams])
 
   const handleSortChange = (sort: string) => {
     setCurrentSort(sort)
@@ -78,7 +88,9 @@ export default function QuestionsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">All Questions</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {selectedTag ? `Questions tagged "${selectedTag}"` : 'All Questions'}
+          </h1>
           <p className="text-gray-600 mt-2">
             {loading ? 'Loading...' : `${questions.length} question${questions.length !== 1 ? 's' : ''}`}
           </p>
@@ -88,6 +100,19 @@ export default function QuestionsPage() {
           Ask Question
         </Link>
       </div>
+
+      {/* Tag Filter Display */}
+      {selectedTag && (
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-sm text-gray-600">Filtered by tag:</span>
+          <div className="flex items-center gap-2 px-3 py-1 bg-primary-100 text-primary-700 rounded-md">
+            <span className="font-medium">{selectedTag}</span>
+            <Link href="/questions" className="hover:text-primary-900">
+              <X className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex gap-2 border-b border-gray-200 pb-4 overflow-x-auto">
