@@ -197,9 +197,9 @@ export default function RichTextEditor({
   ]
 
   return (
-    <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-transparent">
+    <div className="border border-[#00ff7f] rounded-lg overflow-hidden shadow-[0_0_16px_2px_#00ff7f22] focus-within:ring-2 focus-within:ring-[#00ff7f] focus-within:border-[#00ff7f] bg-black">
       {/* Toolbar */}
-      <div className="bg-gray-50 border-b border-gray-200 p-2 flex flex-wrap gap-1">
+      <div className="bg-black border-b border-[#00ff7f33] p-2 flex flex-wrap gap-1">
         {/* Format Buttons */}
         <div className="flex gap-1 border-r border-gray-300 pr-2 mr-2">
           {formatButtons.map(({ command, icon: Icon, title }) => (
@@ -207,7 +207,7 @@ export default function RichTextEditor({
               key={command}
               type="button"
               onClick={() => execCommand(command)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+              className="p-2 text-[#00ff7f] hover:text-black hover:bg-[#00ff7f] rounded transition-colors"
               title={title}
             >
               <Icon className="w-4 h-4" />
@@ -222,7 +222,7 @@ export default function RichTextEditor({
               key={command}
               type="button"
               onClick={() => execCommand(command)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+              className="p-2 text-[#00ff7f] hover:text-black hover:bg-[#00ff7f] rounded transition-colors"
               title={title}
             >
               <Icon className="w-4 h-4" />
@@ -237,7 +237,7 @@ export default function RichTextEditor({
               key={command}
               type="button"
               onClick={() => execCommand(command)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+              className="p-2 text-[#00ff7f] hover:text-black hover:bg-[#00ff7f] rounded transition-colors"
               title={title}
             >
               <Icon className="w-4 h-4" />
@@ -250,7 +250,7 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => setShowLinkDialog(true)}
-            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+            className="p-2 text-[#00ff7f] hover:text-black hover:bg-[#00ff7f] rounded transition-colors"
             title="Insert Link"
           >
             <Link className="w-4 h-4" />
@@ -262,7 +262,7 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+            className="p-2 text-[#00ff7f] hover:text-black hover:bg-[#00ff7f] rounded transition-colors"
             title="Upload Image"
           >
             <Image className="w-4 h-4" />
@@ -281,7 +281,7 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+            className="p-2 text-[#00ff7f] hover:text-black hover:bg-[#00ff7f] rounded transition-colors"
             title="Insert Emoji"
           >
             <Smile className="w-4 h-4" />
@@ -313,7 +313,7 @@ export default function RichTextEditor({
               key={command}
               type="button"
               onClick={() => execCommand(command)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+              className="p-2 text-[#00ff7f] hover:text-black hover:bg-[#00ff7f] rounded transition-colors"
               title={title}
             >
               <Icon className="w-4 h-4" />
@@ -332,7 +332,7 @@ export default function RichTextEditor({
         onCompositionEnd={handleCompositionEnd}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
-        className="p-4 focus:outline-none"
+        className="p-4 focus:outline-none bg-black text-[#00ff7f] min-h-[150px]"
         style={{ 
           minHeight,
           direction: 'ltr',
