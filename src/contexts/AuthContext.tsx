@@ -41,10 +41,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me')
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include' // Ensure cookies are sent
+      })
       if (response.ok) {
         const data = await response.json()
         setUser(data.user)
+      } else {
+        console.log('Auth check failed with status:', response.status)
       }
     } catch (error) {
       console.error('Auth check failed:', error)

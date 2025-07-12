@@ -10,20 +10,55 @@ export default function AskQuestionPage() {
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // TODO: Implement question submission
-    console.log('Submitting question:', { title, description, tags })
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Process tags - split by comma and clean up
+      const tagArray = tags.split(',').map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0)
+      
+      if (tagArray.length === 0) {
+        alert('Please add at least one tag')
+        setIsSubmitting(false)
+        return
+      }
+      
+      if (tagArray.length > 5) {
+        alert('Maximum 5 tags allowed')
+        setIsSubmitting(false)
+        return
+      }
+      
+      const response = await fetch('/api/questions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies
+        body: JSON.stringify({
+          title: title.trim(),
+          content: description,
+          tags: tagArray
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        // Redirect to the questions page
+        window.location.href = '/questions'
+      } else {
+        setError(data.error || 'Failed to post question')
+      }
+    } catch (error) {
+      console.error('Error posting question:', error)
+      alert('An error occurred while posting your question')
+    } finally {
       setIsSubmitting(false)
-      // TODO: Redirect to question page or questions list
-      alert('Question submitted successfully!')
-    }, 1000)
+    }
   }
 
   return (
@@ -39,6 +74,13 @@ export default function AskQuestionPage() {
           Get help from the community by asking a clear, detailed question.
         </p>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-sm">{error}</p>
+        </div>
+      )}
 
       {/* Form */}
       <div className="card">

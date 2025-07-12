@@ -49,7 +49,7 @@ const TagSchema = new Schema<ITag>({
 })
 
 // Indexes for better performance
-TagSchema.index({ name: 1 })
+// Note: name index is created automatically by unique: true
 TagSchema.index({ questionCount: -1 })
 TagSchema.index({ createdAt: -1 })
 

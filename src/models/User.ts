@@ -115,8 +115,7 @@ const UserSchema = new Schema<IUser>({
 })
 
 // Indexes for better performance
-UserSchema.index({ email: 1 })
-UserSchema.index({ username: 1 })
+// Note: email and username indexes are created automatically by unique: true
 UserSchema.index({ reputation: -1 })
 
 // Virtual for user's display name
