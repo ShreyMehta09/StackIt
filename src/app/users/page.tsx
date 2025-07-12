@@ -78,221 +78,175 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Users</h1>
-        <p className="text-gray-600 mt-2">
-          Discover and connect with the StackIt community
-        </p>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        {/* Search */}
-        <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
-          <div className="relative flex-1 md:w-80">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search users..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-          <button
-            type="submit"
-            className="btn-primary px-4"
-          >
-            Search
-          </button>
-        </form>
-
-        {/* Sort Options */}
-        <div className="flex gap-2 overflow-x-auto">
-          <button 
-            onClick={() => handleSortChange('reputation')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${
-              currentSort === 'reputation' 
-                ? 'bg-primary-600 text-white' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Reputation
-          </button>
-          <button 
-            onClick={() => handleSortChange('newest')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${
-              currentSort === 'newest' 
-                ? 'bg-primary-600 text-white' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Newest
-          </button>
-          <button 
-            onClick={() => handleSortChange('name')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${
-              currentSort === 'name' 
-                ? 'bg-primary-600 text-white' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Name
-          </button>
+    <div className="min-h-screen w-full bg-black flex flex-col items-center px-4 py-10">
+      <div className="w-full max-w-3xl mx-auto flex flex-col space-y-10">
+        {/* Header */}
+        <div>
+          <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">Users</h1>
+          <p className="text-gray-400 text-lg">Discover and connect with the StackIt community</p>
         </div>
-      </div>
 
-      {/* Users List - Horizontal Layout */}
-      <div className="space-y-4">
-        {loading ? (
-          // Loading skeleton
-          [...Array(8)].map((_, i) => (
-            <div key={i} className="card animate-pulse">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-gray-200 rounded-full flex-shrink-0"></div>
+        {/* Search and Filters */}
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between w-full">
+          {/* Search */}
+          <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-80">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ff7f] w-6 h-6 drop-shadow-[0_0_8px_#00ff7f]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search users..."
+                className="w-full pl-12 pr-4 py-3 bg-black border border-[#00ff7f55] rounded-2xl text-white placeholder-white/60 shadow-[0_0_16px_2px_#00ff7f22] focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f] transition"
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-[#00ff7f] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#00ff7fcc] transition drop-shadow-[0_0_8px_#00ff7f]"
+            >
+              Search
+            </button>
+          </form>
+
+          {/* Sort Options */}
+          <div className="flex gap-2 overflow-x-auto">
+            {['reputation', 'newest', 'name'].map((sort) => (
+              <button
+                key={sort}
+                onClick={() => handleSortChange(sort)}
+                className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap border transition-all
+                  ${currentSort === sort
+                    ? 'bg-[#00ff7f] text-black border-[#00ff7f] shadow-[0_0_8px_#00ff7f]'
+                    : 'bg-black text-white border-[#222] hover:border-[#00ff7f88] hover:text-[#00ff7f]'}
+                `}
+              >
+                {sort.charAt(0).toUpperCase() + sort.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Users List - Neon Cards */}
+        <div className="space-y-6 w-full">
+          {loading ? (
+            // Loading skeleton
+            [...Array(8)].map((_, i) => (
+              <div key={i} className="bg-black border border-[#00ff7f33] rounded-2xl p-6 flex items-center gap-6 animate-pulse shadow-[0_0_16px_2px_#00ff7f22]">
+                <div className="w-16 h-16 bg-[#222] rounded-full flex-shrink-0" />
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-4">
-                    <div className="h-6 bg-gray-200 rounded w-32"></div>
-                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                    <div className="h-6 bg-[#222] rounded w-32" />
+                    <div className="h-4 bg-[#222] rounded w-24" />
                   </div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-[#222] rounded w-3/4" />
                   <div className="flex gap-6">
-                    <div className="h-4 bg-gray-200 rounded w-20"></div>
-                    <div className="h-4 bg-gray-200 rounded w-20"></div>
-                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                    <div className="h-4 bg-[#222] rounded w-20" />
+                    <div className="h-4 bg-[#222] rounded w-20" />
+                    <div className="h-4 bg-[#222] rounded w-24" />
                   </div>
                 </div>
               </div>
-            </div>
-          ))
-        ) : users.length > 0 ? (
-          users.map((user) => (
-            <Link key={user._id} href={`/users/${user.username}`}>
-              <div className="card hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="flex items-center gap-6">
+            ))
+          ) : users.length > 0 ? (
+            users.map((user) => (
+              <Link key={user._id} href={`/users/${user.username}`}>
+                <div className="bg-black border border-[#00ff7f55] rounded-2xl p-6 flex items-center gap-6 hover:shadow-[0_0_24px_4px_#00ff7f88] transition-shadow cursor-pointer shadow-[0_0_16px_2px_#00ff7f22]">
                   {/* Avatar */}
-                  <div className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 bg-[#00ff7f] rounded-full flex items-center justify-center flex-shrink-0 shadow-[0_0_16px_2px_#00ff7f88]">
+                    <User className="w-8 h-8 text-black" />
                   </div>
 
                   {/* User Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-4 mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900">{user.username}</h3>
-                      <div className="flex items-center gap-1 text-sm text-gray-600">
-                        <Award className="w-4 h-4 text-yellow-600" />
+                      <h3 className="text-xl font-semibold text-white">{user.username}</h3>
+                      <div className="flex items-center gap-1 text-sm text-[#00ff7f]">
+                        <Award className="w-4 h-4 text-yellow-400" />
                         <span className="font-medium">{user.reputation}</span>
-                        <span>reputation</span>
+                        <span className="text-gray-400">reputation</span>
                       </div>
                     </div>
 
                     {/* Bio */}
                     {user.bio && (
-                      <p className="text-gray-600 mb-3 line-clamp-2">
-                        {user.bio}
-                      </p>
+                      <p className="text-gray-400 mb-3 line-clamp-2">{user.bio}</p>
                     )}
 
                     {/* Stats and Join Date */}
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
+                    <div className="flex items-center gap-6 text-sm text-gray-400">
                       <div className="flex items-center gap-1">
-                        <HelpCircle className="w-4 h-4 text-primary-600" />
-                        <span className="font-medium text-gray-900">{user.stats.questionsAsked}</span>
+                        <HelpCircle className="w-4 h-4 text-[#00ff7f]" />
+                        <span className="font-medium text-white">{user.stats.questionsAsked}</span>
                         <span>questions</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <MessageSquare className="w-4 h-4 text-green-600" />
-                        <span className="font-medium text-gray-900">{user.stats.answersGiven}</span>
+                        <MessageSquare className="w-4 h-4 text-green-400" />
+                        <span className="font-medium text-white">{user.stats.answersGiven}</span>
                         <span>answers</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-4 h-4 text-blue-400" />
                         <span>Joined {formatTimeAgo(user.joinedAt)}</span>
                       </div>
                     </div>
 
                     {/* Additional Stats */}
-                    <div className="flex items-center gap-6 text-xs text-gray-400 mt-2">
+                    <div className="flex items-center gap-6 text-xs text-gray-500 mt-2">
                       <span>{user.stats.upvotesReceived} upvotes received</span>
                       <span>{user.stats.acceptedAnswers} accepted answers</span>
                     </div>
                   </div>
-
-                  {/* Right side stats */}
-                  <div className="hidden md:flex flex-col items-end text-right space-y-1">
-                    <div className="text-2xl font-bold text-primary-600">
-                      {user.reputation}
-                    </div>
-                    <div className="text-xs text-gray-500">reputation</div>
-                    
-                    <div className="flex gap-4 mt-2 text-sm">
-                      <div className="text-center">
-                        <div className="font-semibold text-gray-900">{user.stats.questionsAsked}</div>
-                        <div className="text-xs text-gray-500">questions</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-semibold text-gray-900">{user.stats.answersGiven}</div>
-                        <div className="text-xs text-gray-500">answers</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </Link>
-          ))
-        ) : (
-          // Empty State
-          <div className="card text-center py-12">
-            <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No users found</h3>
-            <p className="text-gray-600">
-              {searchQuery ? 'Try adjusting your search terms.' : 'No users have joined yet.'}
-            </p>
+              </Link>
+            ))
+          ) : (
+            // Empty State
+            <div className="bg-black border border-[#00ff7f55] rounded-2xl p-12 text-center flex flex-col items-center shadow-[0_0_16px_2px_#00ff7f22]">
+              <User className="w-16 h-16 mb-4 text-[#00ff7f] drop-shadow-[0_0_8px_#00ff7f]" />
+              <h3 className="text-2xl font-semibold text-white mb-2">No users yet</h3>
+              <p className="text-gray-400">User profiles will appear here once people start joining the community.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 mt-8">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-lg border border-[#00ff7f55] text-white bg-black hover:bg-[#00ff7f22] disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Previous
+            </button>
+            <div className="flex gap-1">
+              {[...Array(Math.min(totalPages, 5))].map((_, i) => {
+                const pageNum = i + 1
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`px-3 py-2 rounded-lg border transition-all
+                      ${currentPage === pageNum
+                        ? 'bg-[#00ff7f] text-black border-[#00ff7f] shadow-[0_0_8px_#00ff7f]'
+                        : 'bg-black text-white border-[#222] hover:border-[#00ff7f88] hover:text-[#00ff7f]'}
+                    `}
+                  >
+                    {pageNum}
+                  </button>
+                )
+              })}
+            </div>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-lg border border-[#00ff7f55] text-white bg-black hover:bg-[#00ff7f22] disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-8">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            Previous
-          </button>
-          
-          <div className="flex gap-1">
-            {[...Array(Math.min(totalPages, 5))].map((_, i) => {
-              const pageNum = i + 1
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => setCurrentPage(pageNum)}
-                  className={`px-3 py-2 rounded-lg ${
-                    currentPage === pageNum
-                      ? 'bg-primary-600 text-white'
-                      : 'border border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              )
-            })}
-          </div>
-          
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
     </div>
   )
 }
