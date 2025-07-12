@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowUp, ArrowDown, Eye, Clock, User, MessageSquare } from 'lucide-react'
+import { ArrowLeft, ArrowUp, ArrowDown, Eye, Clock, User, MessageSquare, Check } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import RichTextEditor from '@/components/RichTextEditor'
 
 interface Question {
   _id: string
@@ -20,18 +21,41 @@ interface Question {
   downvotes: string[]
   voteScore: number
   answerCount: number
+  acceptedAnswer?: string
+  isResolved: boolean
   createdAt: string
   lastActivity: string
 }
 
+interface Answer {
+  _id: string
+  content: string
+  author: {
+    _id: string
+    username: string
+    reputation: number
+  }
+  voteScore: number
+  upvotes: string[]
+  downvotes: string[]
+  isAccepted: boolean
+  createdAt: string
+}
+
 export default function QuestionDetailPage({ params }: { params: { id: string } }) {
   const [question, setQuestion] = useState<Question | null>(null)
+  const [answers, setAnswers] = useState<Answer[]>([])
   const [loading, setLoading] = useState(true)
+  const [answersLoading, setAnswersLoading] = useState(false)
   const [error, setError] = useState('')
+  const [answerContent, setAnswerContent] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [userVotes, setUserVotes] = useState<{[key: string]: 'up' | 'down' | null}>({})
   const { user } = useAuth()
 
   useEffect(() => {
     fetchQuestion()
+    fetchAnswers()
   }, [params.id])
 
   const fetchQuestion = async () => {
@@ -49,6 +73,142 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
       setError('Failed to load question')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchAnswers = async () => {
+    try {
+      setAnswersLoading(true)
+      const response = await fetch(`/api/questions/${params.id}/answers`)
+      const data = await response.json()
+      
+      if (response.ok) {
+        setAnswers(data.answers)
+        
+        // Initialize user votes if logged in
+        if (user) {
+          const votes: {[key: string]: 'up' | 'down' | null} = {}
+          data.answers.forEach((answer: Answer) => {
+            if (answer.upvotes.includes(user.id)) {
+              votes[answer._id] = 'up'
+            } else if (answer.downvotes.includes(user.id)) {
+              votes[answer._id] = 'down'
+            } else {
+              votes[answer._id] = null
+            }
+          })
+          setUserVotes(votes)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load answers:', error)
+    } finally {
+      setAnswersLoading(false)
+    }
+  }
+
+  const handleVote = async (type: 'up' | 'down', targetType: 'question' | 'answer', targetId: string) => {
+    if (!user) return
+
+    try {
+      const endpoint = targetType === 'question' 
+        ? `/api/questions/${targetId}/vote`
+        : `/api/answers/${targetId}/vote`
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        if (targetType === 'question' && question) {
+          setQuestion({
+            ...question,
+            voteScore: data.voteScore
+          })
+        } else if (targetType === 'answer') {
+          setAnswers(prev => prev.map(answer => 
+            answer._id === targetId 
+              ? { ...answer, voteScore: data.voteScore }
+              : answer
+          ))
+          setUserVotes(prev => ({
+            ...prev,
+            [targetId]: data.userVote
+          }))
+        }
+      } else {
+        alert(data.error)
+      }
+    } catch (error) {
+      console.error('Vote error:', error)
+      alert('Failed to vote')
+    }
+  }
+
+  const handleAcceptAnswer = async (answerId: string) => {
+    if (!user || !question || question.author._id !== user.id) return
+
+    try {
+      const response = await fetch(`/api/answers/${answerId}/accept`, {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        setAnswers(prev => prev.map(answer => ({
+          ...answer,
+          isAccepted: answer._id === answerId
+        })))
+        setQuestion(prev => prev ? {
+          ...prev,
+          acceptedAnswer: answerId,
+          isResolved: true
+        } : null)
+      } else {
+        const data = await response.json()
+        alert(data.error)
+      }
+    } catch (error) {
+      console.error('Accept answer error:', error)
+      alert('Failed to accept answer')
+    }
+  }
+
+  const handleSubmitAnswer = async () => {
+    if (!user || !answerContent.trim()) return
+
+    try {
+      setSubmitting(true)
+      const response = await fetch(`/api/questions/${params.id}/answers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: answerContent }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setAnswers(prev => [...prev, data.answer])
+        setAnswerContent('')
+        setQuestion(prev => prev ? {
+          ...prev,
+          answerCount: prev.answerCount + 1
+        } : null)
+      } else {
+        alert(data.error)
+      }
+    } catch (error) {
+      console.error('Submit answer error:', error)
+      alert('Failed to submit answer')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -124,11 +284,19 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
         <div className="flex gap-6">
           {/* Vote buttons */}
           <div className="flex flex-col items-center space-y-2">
-            <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <button 
+              onClick={() => handleVote('up', 'question', question._id)}
+              disabled={!user}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <ArrowUp className="w-6 h-6 text-gray-600" />
             </button>
             <span className="text-xl font-bold text-gray-900">{question.voteScore}</span>
-            <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <button 
+              onClick={() => handleVote('down', 'question', question._id)}
+              disabled={!user}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <ArrowDown className="w-6 h-6 text-gray-600" />
             </button>
           </div>
@@ -172,30 +340,169 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
         </div>
       </div>
 
-      {/* Answers section placeholder */}
+      {/* Answers section */}
       <div className="card">
         <h2 className="text-xl font-bold text-gray-900 mb-4">
           {question.answerCount} Answer{question.answerCount !== 1 ? 's' : ''}
         </h2>
         
-        {question.answerCount === 0 ? (
+        {answersLoading ? (
+          <div className="space-y-6">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="animate-pulse border-b border-gray-200 pb-6 last:border-b-0">
+                <div className="flex gap-6">
+                  <div className="flex flex-col items-center space-y-2 min-w-[60px]">
+                    <div className="w-8 h-8 bg-gray-200 rounded"></div>
+                    <div className="w-6 h-4 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <div className="h-4 bg-gray-200 rounded w-full"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : answers.length > 0 ? (
+          <div className="space-y-6">
+            {answers.map((answer) => (
+              <div 
+                key={answer._id} 
+                className={`border-b border-gray-200 pb-6 last:border-b-0 ${
+                  answer.isAccepted ? 'bg-green-50 -mx-6 px-6 py-4 rounded-lg' : ''
+                }`}
+              >
+                <div className="flex gap-6">
+                  {/* Vote buttons */}
+                  <div className="flex flex-col items-center space-y-2 min-w-[60px]">
+                    <button 
+                      onClick={() => handleVote('up', 'answer', answer._id)}
+                      disabled={!user}
+                      className={`p-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                        userVotes[answer._id] === 'up' 
+                          ? 'bg-primary-100 text-primary-600' 
+                          : 'hover:bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      <ArrowUp className="w-5 h-5" />
+                    </button>
+                    <span className="text-lg font-bold text-gray-900">{answer.voteScore}</span>
+                    <button 
+                      onClick={() => handleVote('down', 'answer', answer._id)}
+                      disabled={!user}
+                      className={`p-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                        userVotes[answer._id] === 'down' 
+                          ? 'bg-red-100 text-red-600' 
+                          : 'hover:bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      <ArrowDown className="w-5 h-5" />
+                    </button>
+                    
+                    {/* Accept button - only show to question author */}
+                    {user && question.author._id === user.id && (
+                      <button
+                        onClick={() => handleAcceptAnswer(answer._id)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          answer.isAccepted
+                            ? 'bg-green-100 text-green-600'
+                            : 'hover:bg-gray-100 text-gray-600'
+                        }`}
+                        title={answer.isAccepted ? 'Accepted answer' : 'Accept this answer'}
+                      >
+                        <Check className="w-5 h-5" />
+                      </button>
+                    )}
+                    
+                    {/* Show accepted indicator for non-authors */}
+                    {answer.isAccepted && (!user || question.author._id !== user.id) && (
+                      <div className="p-2 bg-green-100 text-green-600 rounded-lg">
+                        <Check className="w-5 h-5" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Answer content */}
+                  <div className="flex-1">
+                    {answer.isAccepted && (
+                      <div className="mb-4 flex items-center gap-2 text-green-600 font-medium">
+                        <Check className="w-4 h-4" />
+                        <span>Accepted Answer</span>
+                      </div>
+                    )}
+                    
+                    <div 
+                      className="prose max-w-none mb-6"
+                      dangerouslySetInnerHTML={{ __html: answer.content }}
+                    />
+
+                    {/* Author info */}
+                    <div className="flex justify-end">
+                      <div className="bg-blue-50 rounded-lg p-4 max-w-xs">
+                        <div className="text-xs text-blue-600 mb-1">answered {formatTimeAgo(answer.createdAt)}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                            <User className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-blue-900">{answer.author.username}</div>
+                            <div className="text-xs text-blue-600">{answer.author.reputation} reputation</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
           <div className="text-center py-8 text-gray-500">
             <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p>No answers yet. Be the first to answer!</p>
           </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            <p>Answer system coming soon...</p>
-          </div>
         )}
       </div>
 
-      {/* Answer form placeholder */}
+      {/* Answer form */}
       {user && (
         <div className="card">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Answer</h3>
-          <div className="text-center py-8 text-gray-500">
-            <p>Answer form coming soon...</p>
+          <div className="space-y-4">
+            <RichTextEditor
+              value={answerContent}
+              onChange={setAnswerContent}
+              placeholder="Write your answer here..."
+            />
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-500">
+                Minimum 20 characters required
+              </p>
+              <button
+                onClick={handleSubmitAnswer}
+                disabled={submitting || answerContent.length < 20}
+                className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Submitting...' : 'Post Your Answer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Login prompt for non-authenticated users */}
+      {!user && (
+        <div className="card text-center py-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Want to answer?</h3>
+          <p className="text-gray-600 mb-4">You need to be logged in to post an answer.</p>
+          <div className="flex gap-4 justify-center">
+            <Link href="/login" className="btn-primary">
+              Log In
+            </Link>
+            <Link href="/register" className="btn-secondary">
+              Sign Up
+            </Link>
           </div>
         </div>
       )}
