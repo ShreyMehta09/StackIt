@@ -36,12 +36,16 @@ export default function CreateAdminUserPage() {
   // Redirect if not admin
   if (!user || user.role !== 'admin') {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="card text-center py-12">
-          <Shield className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-6">You need admin privileges to access this page.</p>
-          <Link href="/" className="btn-primary">Go Home</Link>
+      <div className="min-h-screen w-full bg-black flex flex-col items-center px-4 py-10">
+        <div className="w-full max-w-2xl mx-auto flex flex-col items-center space-y-10">
+          <div className="bg-black border border-[#00ff7f55] rounded-2xl p-12 text-center flex flex-col items-center shadow-[0_0_16px_2px_#00ff7f22]">
+            <Shield className="w-16 h-16 mb-4 text-[#00ff7f] drop-shadow-[0_0_8px_#00ff7f]" />
+            <h1 className="text-2xl font-bold text-white mb-4">Access Denied</h1>
+            <p className="text-gray-400 mb-6">You need admin privileges to access this page.</p>
+            <Link href="/" className="bg-[#00ff7f] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#00ff7fcc] transition drop-shadow-[0_0_8px_#00ff7f]">
+              Go Home
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -133,250 +137,227 @@ export default function CreateAdminUserPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <Link href="/admin" className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-4">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Admin Dashboard
-        </Link>
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <UserPlus className="w-8 h-8 text-blue-600" />
-          Create Administrator
-        </h1>
-        <p className="text-gray-600 mt-2">Create new administrator accounts with full platform access</p>
-      </div>
-
-      {/* Success Message */}
-      {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
-          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-          <p className="text-green-800">{success}</p>
+    <div className="min-h-screen w-full bg-black flex flex-col items-center px-4 py-10">
+      <div className="w-full max-w-2xl mx-auto flex flex-col space-y-10">
+        {/* Header */}
+        <div className="w-full">
+          <Link href="/admin" className="inline-flex items-center text-[#00ff7f] hover:text-white mb-4 font-semibold">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Admin Dashboard
+          </Link>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <UserPlus className="w-8 h-8 text-[#00ff7f]" />
+            Create Administrator
+          </h1>
+          <p className="text-gray-400 mt-2">Create new administrator accounts with full platform access</p>
         </div>
-      )}
 
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
+        {/* Success Message */}
+        {success && (
+          <div className="bg-[#00ff7f22] border border-[#00ff7f] rounded-lg p-4 flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-[#00ff7f] flex-shrink-0" />
+            <p className="text-[#00ff7f]">{success}</p>
+          </div>
+        )}
 
-      {/* Debug Info */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-medium text-blue-900 mb-2">Debug Info</h3>
-          <p className="text-sm text-blue-800">Current user: {user.username} (Role: {user.role})</p>
-          <p className="text-sm text-blue-800">API Endpoint: /api/admin/create-admin</p>
-        </div>
-      )}
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-900/30 border border-red-500 rounded-lg p-4 flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+            <p className="text-red-200">{error}</p>
+          </div>
+        )}
 
-      {/* Create Admin Form */}
-      <div className="card">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Role Display - Admin Only */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Role
-            </label>
-            <div className="w-full">
-              <div className="relative flex items-center p-4 border-2 border-blue-500 bg-blue-50 rounded-lg">
+        {/* Create Admin Form */}
+        <div className="bg-black border border-[#00ff7f55] rounded-2xl p-8 shadow-[0_0_16px_2px_#00ff7f22]">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Role Display - Admin Only */}
+            <div>
+              <div className="relative flex items-center p-4 border-2 border-[#00ff7f] bg-black rounded-lg mb-4">
                 <div className="flex items-center gap-3">
-                  <Crown className="w-6 h-6 text-yellow-600" />
+                  <Crown className="w-6 h-6 text-yellow-400" />
                   <div>
-                    <div className="font-medium text-gray-900">Administrator</div>
-                    <div className="text-sm text-gray-600">Full platform access and management capabilities</div>
+                    <div className="font-medium text-white">Administrator</div>
+                    <div className="text-sm text-gray-400">Full platform access and management capabilities</div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Username */}
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Enter username"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              3-30 characters, letters, numbers, and underscores only
-            </p>
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Enter email address"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <div className="relative">
+            {/* Username */}
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-[#00ff7f] mb-2">
+                Username
+              </label>
               <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
-                value={formData.password}
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
                 onChange={handleInputChange}
-                placeholder="Enter password"
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter username"
+                className="w-full px-4 py-3 bg-black border border-[#00ff7f55] rounded-lg text-white focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f]"
                 required
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              <p className="text-xs text-gray-400 mt-1">
+                3-30 characters, letters, numbers, and underscores only
+              </p>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Minimum 6 characters
-            </p>
-          </div>
-
-          {/* Confirm Password */}
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-              Confirm Password
-            </label>
-            <div className="relative">
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-[#00ff7f] mb-2">
+                Email Address
+              </label>
               <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
                 onChange={handleInputChange}
-                placeholder="Confirm password"
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter email address"
+                className="w-full px-4 py-3 bg-black border border-[#00ff7f55] rounded-lg text-white focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f]"
                 required
               />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            </div>
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-[#00ff7f] mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password"
+                  className="w-full px-4 py-3 pr-12 bg-black border border-[#00ff7f55] rounded-lg text-white focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f]"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00ff7f] hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">
+                Minimum 6 characters
+              </p>
+            </div>
+            {/* Confirm Password */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#00ff7f] mb-2">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="Confirm password"
+                  className="w-full px-4 py-3 pr-12 bg-black border border-[#00ff7f55] rounded-lg text-white focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f]"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00ff7f] hover:text-white"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+            {/* Reason */}
+            <div>
+              <label htmlFor="reason" className="block text-sm font-medium text-[#00ff7f] mb-2">
+                Reason for Creation
+              </label>
+              <textarea
+                id="reason"
+                name="reason"
+                value={formData.reason}
+                onChange={handleInputChange}
+                placeholder="Enter reason for creating this admin account..."
+                rows={3}
+                className="w-full px-4 py-3 bg-black border border-[#00ff7f55] rounded-lg text-white focus:ring-2 focus:ring-[#00ff7f] focus:border-[#00ff7f] resize-none"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Optional: Provide context for audit trail
+              </p>
+            </div>
+            {/* Submit Button */}
+            <div className="flex gap-4">
+              <Link
+                href="/admin"
+                className="flex-1 px-6 py-3 border border-[#00ff7f55] text-white rounded-lg hover:bg-[#00ff7f22] transition-colors text-center"
               >
-                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                Cancel
+              </Link>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 px-6 py-3 bg-[#00ff7f] text-black rounded-lg font-semibold hover:bg-[#00ff7fcc] transition drop-shadow-[0_0_8px_#00ff7f] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4" />
+                    Create Administrator
+                  </>
+                )}
               </button>
             </div>
-          </div>
+          </form>
+        </div>
 
-          {/* Reason */}
-          <div>
-            <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-2">
-              Reason for Creation
-            </label>
-            <textarea
-              id="reason"
-              name="reason"
-              value={formData.reason}
-              onChange={handleInputChange}
-              placeholder="Enter reason for creating this admin account..."
-              rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Optional: Provide context for audit trail
-            </p>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex gap-4">
-            <Link
-              href="/admin"
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <UserPlus className="w-4 h-4" />
-                  Create Administrator
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* Info Card */}
-      <div className="card bg-blue-50 border-blue-200">
-        <div className="flex items-start gap-3">
-          <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-          <div>
-            <h3 className="font-medium text-blue-900 mb-2">Administrator Account Information</h3>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Admin users have full access to all platform features</li>
-              <li>• Can create additional admin accounts</li>
-              <li>• All admin actions are logged for audit purposes</li>
-              <li>• Admin accounts are automatically verified</li>
-              <li>• Starting reputation: 1000 points</li>
-            </ul>
+        {/* Info Card */}
+        <div className="bg-black border border-[#00ff7f55] rounded-2xl p-6 shadow-[0_0_16px_2px_#00ff7f22]">
+          <div className="flex items-start gap-3">
+            <Shield className="w-6 h-6 text-[#00ff7f] flex-shrink-0 mt-1" />
+            <div>
+              <h3 className="font-medium text-[#00ff7f] mb-2">Administrator Account Information</h3>
+              <ul className="text-sm text-white space-y-1">
+                <li>• Admin users have full access to all platform features</li>
+                <li>• Can create additional admin accounts</li>
+                <li>• All admin actions are logged for audit purposes</li>
+                <li>• Admin accounts are automatically verified</li>
+                <li>• Starting reputation: 1000 points</li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Link
-          href="/admin"
-          className="card hover:shadow-lg transition-shadow cursor-pointer"
-        >
-          <div className="flex items-center gap-4">
-            <Shield className="w-8 h-8 text-red-600" />
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link
+            href="/admin"
+            className="bg-black border border-[#00ff7f55] rounded-2xl p-6 flex items-center gap-4 hover:shadow-[0_0_24px_4px_#00ff7f88] transition-shadow cursor-pointer shadow-[0_0_16px_2px_#00ff7f22]"
+          >
+            <Shield className="w-8 h-8 text-red-500" />
             <div>
-              <h3 className="font-medium text-gray-900">Back to Dashboard</h3>
-              <p className="text-sm text-gray-600">Return to admin dashboard</p>
+              <h3 className="font-medium text-white">Back to Dashboard</h3>
+              <p className="text-sm text-gray-400">Return to admin dashboard</p>
             </div>
-          </div>
-        </Link>
-
-        <Link
-          href="/users"
-          className="card hover:shadow-lg transition-shadow cursor-pointer"
-        >
-          <div className="flex items-center gap-4">
-            <Users className="w-8 h-8 text-green-600" />
+          </Link>
+          <Link
+            href="/users"
+            className="bg-black border border-[#00ff7f55] rounded-2xl p-6 flex items-center gap-4 hover:shadow-[0_0_24px_4px_#00ff7f88] transition-shadow cursor-pointer shadow-[0_0_16px_2px_#00ff7f22]"
+          >
+            <Users className="w-8 h-8 text-[#00ff7f]" />
             <div>
-              <h3 className="font-medium text-gray-900">View All Users</h3>
-              <p className="text-sm text-gray-600">Browse community members</p>
+              <h3 className="font-medium text-white">View All Users</h3>
+              <p className="text-sm text-gray-400">Browse community members</p>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </div>
     </div>
   )

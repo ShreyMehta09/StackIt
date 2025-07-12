@@ -10,7 +10,6 @@ import {
   User, 
   Award, 
   Clock,
-  MarkAsRead,
   Trash2,
   CheckCheck
 } from 'lucide-react'
@@ -169,149 +168,137 @@ export default function NotificationsPage() {
 
   if (!user) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="card text-center py-12">
-          <Bell className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Please Log In</h1>
-          <p className="text-gray-600 mb-6">You need to be logged in to view notifications.</p>
-          <Link href="/login" className="btn-primary">
-            Log In
-          </Link>
+      <div className="min-h-screen w-full bg-black flex flex-col items-center px-4 py-10">
+        <div className="w-full max-w-3xl mx-auto flex flex-col items-center space-y-10">
+          <div className="bg-black border border-[#00ff7f55] rounded-2xl p-12 text-center flex flex-col items-center shadow-[0_0_16px_2px_#00ff7f22]">
+            <Bell className="w-16 h-16 mb-4 text-[#00ff7f] drop-shadow-[0_0_8px_#00ff7f]" />
+            <h1 className="text-2xl font-bold text-white mb-4">Please Log In</h1>
+            <p className="text-gray-400 mb-6">You need to be logged in to view notifications.</p>
+            <Link href="/login" className="bg-[#00ff7f] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#00ff7fcc] transition drop-shadow-[0_0_8px_#00ff7f]">
+              Log In
+            </Link>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-          <p className="text-gray-600 mt-2">
-            {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}` : 'All caught up!'}
-          </p>
+    <div className="min-h-screen w-full bg-black flex flex-col items-center px-4 py-10">
+      <div className="w-full max-w-3xl mx-auto flex flex-col space-y-10">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
+          <div>
+            <h1 className="text-4xl font-extrabold text-white mb-1 tracking-tight">Notifications</h1>
+            <p className="text-gray-400 text-lg">
+              {unreadCount > 0 ? (
+                <span className="text-[#00ff7f] font-bold">{unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}</span>
+              ) : 'All caught up!'}
+            </p>
+          </div>
+          {unreadCount > 0 && (
+            <button
+              onClick={markAllAsRead}
+              className="bg-[#00ff7f] text-black px-5 py-2 rounded-lg font-semibold hover:bg-[#00ff7fcc] transition drop-shadow-[0_0_8px_#00ff7f] mt-4 sm:mt-0"
+            >
+              <CheckCheck className="w-5 h-5 inline-block mr-2" />
+              Mark All Read
+            </button>
+          )}
         </div>
-        
-        {unreadCount > 0 && (
+
+        {/* Filters */}
+        <div className="flex gap-2 border-b border-[#222] pb-4 w-full">
           <button
-            onClick={markAllAsRead}
-            className="btn-secondary flex items-center gap-2"
+            onClick={() => { setFilter('all'); setCurrentPage(1); }}
+            className={`px-4 py-2 rounded-lg font-medium border transition-all
+              ${filter === 'all'
+                ? 'bg-[#00ff7f] text-black border-[#00ff7f] shadow-[0_0_8px_#00ff7f]'
+                : 'bg-black text-white border-[#222] hover:border-[#00ff7f88] hover:text-[#00ff7f]'}
+            `}
           >
-            <CheckCheck className="w-4 h-4" />
-            Mark All Read
+            All Notifications
           </button>
-        )}
-      </div>
+          <button
+            onClick={() => { setFilter('unread'); setCurrentPage(1); }}
+            className={`px-4 py-2 rounded-lg font-medium border transition-all
+              ${filter === 'unread'
+                ? 'bg-[#00ff7f] text-black border-[#00ff7f] shadow-[0_0_8px_#00ff7f]'
+                : 'bg-black text-white border-[#222] hover:border-[#00ff7f88] hover:text-[#00ff7f]'}
+            `}
+          >
+            Unread <span className="ml-1">({unreadCount})</span>
+          </button>
+        </div>
 
-      {/* Filters */}
-      <div className="flex gap-2 border-b border-gray-200 pb-4">
-        <button
-          onClick={() => {
-            setFilter('all')
-            setCurrentPage(1)
-          }}
-          className={`px-4 py-2 rounded-lg font-medium ${
-            filter === 'all'
-              ? 'bg-primary-600 text-white'
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          All Notifications
-        </button>
-        <button
-          onClick={() => {
-            setFilter('unread')
-            setCurrentPage(1)
-          }}
-          className={`px-4 py-2 rounded-lg font-medium ${
-            filter === 'unread'
-              ? 'bg-primary-600 text-white'
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          Unread ({unreadCount})
-        </button>
-      </div>
-
-      {/* Notifications List */}
-      <div className="space-y-4">
-        {loading ? (
-          // Loading skeleton
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="card animate-pulse">
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+        {/* Notifications List */}
+        <div className="space-y-6 w-full">
+          {loading ? (
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="bg-black border border-[#00ff7f33] rounded-2xl p-6 flex gap-4 animate-pulse shadow-[0_0_16px_2px_#00ff7f22]">
+                  <div className="w-10 h-10 bg-[#222] rounded-full" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-[#222] rounded w-3/4" />
+                    <div className="h-3 bg-[#222] rounded w-1/2" />
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : notifications.length > 0 ? (
-          <>
-            {notifications.map((notification) => (
-              <div
-                key={notification._id}
-                className={`card hover:shadow-md transition-shadow ${
-                  !notification.isRead ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
-                }`}
-              >
-                <div className="flex gap-4">
+              ))}
+            </div>
+          ) : notifications.length > 0 ? (
+            <>
+              {notifications.map((notification) => (
+                <div
+                  key={notification._id}
+                  className={`bg-black rounded-2xl p-6 flex gap-4 items-start transition-shadow shadow-[0_0_16px_2px_#00ff7f22] border ${!notification.isRead ? 'border-[#00ff7f] shadow-[0_0_24px_4px_#00ff7f88]' : 'border-[#222]'}`}
+                >
                   {/* Icon */}
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 mt-1">
                     {getNotificationIcon(notification.type)}
                   </div>
-
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1">
+                        <h3 className="font-semibold text-white mb-1">
                           {notification.title}
                         </h3>
-                        <p className="text-gray-600 mb-2">
+                        <p className="text-gray-400 mb-2">
                           {notification.message}
                         </p>
-                        
                         {/* Related content link */}
                         {notification.relatedQuestion && (
                           <Link
                             href={getNotificationLink(notification)}
                             onClick={() => !notification.isRead && markAsRead(notification._id)}
-                            className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                            className="text-[#00ff7f] hover:text-white text-sm font-medium"
                           >
                             View Question: {notification.relatedQuestion.title}
                           </Link>
                         )}
-                        
                         {/* Metadata */}
                         <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
                           <div className="flex items-center gap-1">
-                            <User className="w-3 h-3" />
+                            <User className="w-3 h-3 text-[#00ff7f]" />
                             <Link 
                               href={`/users/${notification.sender.username}`}
-                              className="hover:text-primary-600"
+                              className="hover:text-[#00ff7f] text-white/80"
                             >
                               {notification.sender.username}
                             </Link>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            <span>{formatTimeAgo(notification.createdAt)}</span>
+                            <Clock className="w-3 h-3 text-white/60" />
+                            <span className="text-gray-400">{formatTimeAgo(notification.createdAt)}</span>
                           </div>
                         </div>
                       </div>
-
                       {/* Actions */}
                       <div className="flex items-center gap-2 ml-4">
                         {!notification.isRead && (
                           <button
                             onClick={() => markAsRead(notification._id)}
-                            className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                            className="p-2 text-[#00ff7f] hover:text-white transition-colors rounded-full bg-[#00ff7f22]"
                             title="Mark as read"
                           >
                             <Check className="w-4 h-4" />
@@ -319,7 +306,7 @@ export default function NotificationsPage() {
                         )}
                         <button
                           onClick={() => deleteNotification(notification._id)}
-                          className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                          className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full bg-[#222]"
                           title="Delete notification"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -328,72 +315,69 @@ export default function NotificationsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-8">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-                >
-                  Previous
-                </button>
-                
-                <div className="flex gap-1">
-                  {[...Array(Math.min(totalPages, 5))].map((_, i) => {
-                    const pageNum = i + 1
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`px-3 py-2 rounded-lg ${
-                          currentPage === pageNum
-                            ? 'bg-primary-600 text-white'
-                            : 'border border-gray-300 hover:bg-gray-50'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    )
-                  })}
+              ))}
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center gap-2 mt-8">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-lg border border-[#00ff7f55] text-white bg-black hover:bg-[#00ff7f22] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    Previous
+                  </button>
+                  <div className="flex gap-1">
+                    {[...Array(Math.min(totalPages, 5))].map((_, i) => {
+                      const pageNum = i + 1
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`px-3 py-2 rounded-lg border transition-all
+                            ${currentPage === pageNum
+                              ? 'bg-[#00ff7f] text-black border-[#00ff7f] shadow-[0_0_8px_#00ff7f]'
+                              : 'bg-black text-white border-[#222] hover:border-[#00ff7f88] hover:text-[#00ff7f]'}
+                          `}
+                        >
+                          {pageNum}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-lg border border-[#00ff7f55] text-white bg-black hover:bg-[#00ff7f22] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    Next
+                  </button>
                 </div>
-                
+              )}
+            </>
+          ) : (
+            // Empty State
+            <div className="bg-black border border-[#00ff7f55] rounded-2xl p-12 text-center flex flex-col items-center shadow-[0_0_16px_2px_#00ff7f22]">
+              <Bell className="w-20 h-20 mb-6 text-[#00ff7f] drop-shadow-[0_0_32px_#00ff7f]" />
+              <h3 className="text-2xl font-semibold text-white mb-2">
+                {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
+              </h3>
+              <p className="text-gray-400 mb-6">
+                {filter === 'unread' 
+                  ? 'All caught up! Check back later for new notifications.'
+                  : 'When you receive answers, votes, or mentions, they\'ll appear here.'
+                }
+              </p>
+              {filter === 'unread' && (
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  onClick={() => setFilter('all')}
+                  className="bg-[#00ff7f] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#00ff7fcc] transition drop-shadow-[0_0_8px_#00ff7f]"
                 >
-                  Next
+                  View All Notifications
                 </button>
-              </div>
-            )}
-          </>
-        ) : (
-          // Empty State
-          <div className="card text-center py-12">
-            <Bell className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {filter === 'unread' 
-                ? 'All caught up! Check back later for new notifications.'
-                : 'When you receive answers, votes, or mentions, they\'ll appear here.'
-              }
-            </p>
-            {filter === 'unread' && (
-              <button
-                onClick={() => setFilter('all')}
-                className="btn-secondary"
-              >
-                View All Notifications
-              </button>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
